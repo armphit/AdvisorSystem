@@ -1,0 +1,186 @@
+<br />&nbsp;&nbsp;&nbsp;
+<!-- Button trigger modal -->
+<button
+  type="button"
+  class="btn btn-primary"
+  data-toggle="modal"
+  data-target="#AddGroup"
+  (click)="getMajor()"
+>
+  เพิ่มกลุ่มเรียน
+</button>
+
+<!-- Modal -->
+<div
+  class="modal fade"
+  id="AddGroup"
+  tabindex="-1"
+  role="dialog"
+  aria-labelledby="exampleModalLabel"
+  aria-hidden="true"
+>
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">เพิ่มกลุ่มเรียน</h5>
+        <button
+          type="button"
+          class="close"
+          data-dismiss="modal"
+          aria-label="Close"
+        >
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <mat-form-field *ngIf="datamajor" style="width: 100%;">
+          <mat-label>{{ "โปรดเลือกสาขาวิชา*" }}</mat-label>
+          <mat-select>
+            <mat-option
+              *ngFor="let i of datamajor; let x = index"
+              [value]="i.name"
+              (click)="namegroupch(i.acronym, i.branch_id, i.name_th)"
+            >
+              {{ i["name"] }}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+
+        <span> {{ namegroup }}</span>
+        &nbsp;&nbsp;.&nbsp;&nbsp;
+        <mat-form-field>
+          <input
+            matInput
+            placeholder="โปรดระบุกลุ่มเรียน*"
+            #addGroup
+            maxlength="5"
+          />
+        </mat-form-field>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">
+          Close
+        </button>
+        <button
+          type="button"
+          class="btn btn-primary"
+          data-dismiss="modal"
+          (click)="insertGroup(addGroup.value)"
+        >
+          Save changes
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<mat-form-field
+  class="example-full-width"
+  style="float: right; width: 500px; padding-right: 50px;"
+>
+  <input matInput placeholder="ค้นหา" #se_gr />
+</mat-form-field>
+<br /><br />
+
+<table class="table table-striped" *ngIf="datagroup != null">
+  <thead class="thead-dark">
+    <tr>
+      <th scope="col">ลำดับ</th>
+      <th scope="col">กลุ่มเรียน</th>
+      <th scope="col">สาขาวิชา</th>
+      <th scope="col"></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="let i of onSearchgroup(datagroup, se_gr.value); let x = index">
+      <th scope="row">{{ x + 1 }}</th>
+      <td>
+        {{ i.study_group_name }}
+      </td>
+      <td>{{ i.name }}</td>
+      <td>
+        <span>
+          <button
+            mat-button
+            color="link"
+            data-toggle="modal"
+            data-target="#updateGroup"
+          >
+            <svg
+              class="bi bi-arrow-repeat"
+              width="1.5em"
+              height="1.5em"
+              viewBox="0 0 16 16"
+              fill="currentColor"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                fill-rule="evenodd"
+                d="M2.854 7.146a.5.5 0 0 0-.708 0l-2 2a.5.5 0 1 0 .708.708L2.5 8.207l1.646 1.647a.5.5 0 0 0 .708-.708l-2-2zm13-1a.5.5 0 0 0-.708 0L13.5 7.793l-1.646-1.647a.5.5 0 0 0-.708.708l2 2a.5.5 0 0 0 .708 0l2-2a.5.5 0 0 0 0-.708z"
+              />
+              <path
+                fill-rule="evenodd"
+                d="M8 3a4.995 4.995 0 0 0-4.192 2.273.5.5 0 0 1-.837-.546A6 6 0 0 1 14 8a.5.5 0 0 1-1.001 0 5 5 0 0 0-5-5zM2.5 7.5A.5.5 0 0 1 3 8a5 5 0 0 0 9.192 2.727.5.5 0 1 1 .837.546A6 6 0 0 1 2 8a.5.5 0 0 1 .501-.5z"
+              />
+            </svg></button
+        ></span>
+
+        <span>
+          <button
+            mat-button
+            color="warn"
+            (click)="deleteGroup(i.study_group_id)"
+          >
+            <svg
+              class="bi bi-trash-fill"
+              width="1.5em"
+              height="1.5em"
+              viewBox="0 0 16 16"
+              fill="currentColor"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                fill-rule="evenodd"
+                d="M2.5 1a1 1 0 0 0-1 1v1a1 1 0 0 0 1 1H3v9a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V4h.5a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1H10a1 1 0 0 0-1-1H7a1 1 0 0 0-1 1H2.5zm3 4a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 .5-.5zM8 5a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7A.5.5 0 0 1 8 5zm3 .5a.5.5 0 0 0-1 0v7a.5.5 0 0 0 1 0v-7z"
+              />
+            </svg></button
+        ></span>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+
+<div
+  class="modal fade"
+  id="updateGroup"
+  tabindex="-1"
+  role="dialog"
+  aria-labelledby="exampleModalLabel"
+  aria-hidden="true"
+>
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
+        <button
+          type="button"
+          class="close"
+          data-dismiss="modal"
+          aria-label="Close"
+        >
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        ...
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">
+          Close
+        </button>
+        <button type="button" class="btn btn-primary">Save changes</button>
+      </div>
+    </div>
+  </div>
+</div>
