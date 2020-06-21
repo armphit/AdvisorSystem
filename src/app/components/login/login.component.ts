@@ -13,7 +13,10 @@ export class LoginComponent implements OnInit {
 
   constructor(public service : HttpService , private routes: Router,private formBuilder:FormBuilder) { }
   public msg: any = null;
-  private oldPath: string = "/admin";
+  private adminPath: string = "/admin";
+  private studentPath: string = "/student";
+  private teacherPath: string = "/teacher";
+
   ngOnInit(): void {
     this.formLogin = this.formBuilder.group({
       username: ["", Validators.required],
@@ -31,12 +34,34 @@ export class LoginComponent implements OnInit {
     });
     let httpRespon: any = await this.service.post("login", formData);
 
-    console.log(httpRespon)
+    console.log(httpRespon.response.data.status)
     if (httpRespon.connect) {
-      if (httpRespon.response.success) {
+      if (httpRespon.response.data.status=="Admin") {
         this.service.alertLog("success", "เข้าสู่ระบบสำเร็จ")
         //this.router.navigate(["/home"]);
-        this.service.navRouter(this.oldPath);
+        this.service.navRouter(this.adminPath);
+
+        localStorage.setItem(
+          "userLogin",
+          JSON.stringify(httpRespon.response.data)
+        );
+
+
+      }else if (httpRespon.response.data.status=="นักศึกษา") {
+        this.service.alertLog("success", "เข้าสู่ระบบสำเร็จ")
+        //this.router.navigate(["/home"]);
+        this.service.navRouter(this.studentPath);
+
+        localStorage.setItem(
+          "userLogin",
+          JSON.stringify(httpRespon.response.data)
+        );
+
+
+      }else if (httpRespon.response.data.status=="อาจารย์") {
+        this.service.alertLog("success", "เข้าสู่ระบบสำเร็จ")
+        //this.router.navigate(["/home"]);
+        this.service.navRouter(this.teacherPath);
 
         localStorage.setItem(
           "userLogin",
@@ -49,7 +74,8 @@ export class LoginComponent implements OnInit {
 
       }
     } else {
-      alert("เชื่อมต่อเซิร์ฟเวอร์ผิดพลาด");
+      this.service.alertLog("error", "เชื่อมต่อเซิร์ฟเวอร์ผิดพลาด")
+
     }
   };
 

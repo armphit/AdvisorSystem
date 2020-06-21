@@ -17,10 +17,17 @@ export class RootNavComponent {
       shareReplay()
     );
 
+    public status:any=null;
+
   constructor(
     private breakpointObserver: BreakpointObserver,
     private router: Router
-  ) {}
+  ) {
+     var data :any= JSON.parse(localStorage.userLogin);
+     var json :any= data.status
+     this.status=json
+     console.log(this.status)
+  }
 
   public onLogout = () => {
     this.router.navigate(['/login']);

@@ -8,13 +8,19 @@ import Swal from 'sweetalert2';
   styleUrls: ['./group.component.scss'],
 })
 export class GroupComponent implements OnInit {
-  public datamajor: Array<any> = [];
+  public datamajor: any = null;
   public namegroup: any = '*ไม่ได้เลือก';
+  public name_th: any = null;
   public branch_id: any = null;
   public datagroup: any = null;
+  public dataTeacher: any = null;
+  public nameTh: any = null;
+
+
 
   constructor(private http: HttpService) {
     this.getGroup();
+    this.getMajor();
   }
 
   ngOnInit(): void {}
@@ -22,10 +28,10 @@ export class GroupComponent implements OnInit {
     let getData: any = await this.http.get('admin/branch');
 
     if (getData.connect) {
-      if (getData['response']['rowCount'] > 0) {
-        this.datamajor = getData['response']['result'];
+      if (getData.response.rowCount > 0) {
+        this.datamajor = getData.response.result;
       } else {
-        this.datamajor = [];
+        this.datamajor = null;
       }
     } else {
       alert('ไม่สามารถเชื่อมต่อเซิร์ฟเวอร์ได้');
@@ -35,32 +41,52 @@ export class GroupComponent implements OnInit {
   public namegroupch(acronym: any, code: any, name_th: any) {
     this.namegroup = acronym;
     this.branch_id = code;
+    this.name_th = name_th;
+    this.nameTeacher( this.nameTh)
   }
 
-  public insertGroup = async (addGroup) => {
-    study_group_name: this.namegroup + '.' + addGroup;
-    this.namegroup + '.' + addGroup;
-    branch_id: this.branch_id;
+  public async nameTeacher(username: any) {
 
-    let getData: any = await this.http.post(
-      'admin/setStudy_group/' +
-        this.namegroup +
-        '.' +
-        addGroup +
-        '/' +
-        this.branch_id
-    );
+    // let formData = new FormData();
+    //  formData.append('branch',this.branch_id);
+    // let getData: any = await this.http.post('admin/AddGroup', formData)
+    // this.dataTeacher = getData.response.result;
+    // console.log(this.dataTeacher);
+    // this.nameTh = username;
+    // console.log (username)
+    // if (getData.connect) {
+    //   if (getData.response.rowCount > 0) {
+    //     this.dataTeacher = getData.response.result;
+    //   } else {
+    //     this.dataTeacher = null;
+    //   }
+    // } else {
+    //   alert('ไม่สามารถเชื่อมต่อเซิร์ฟเวอร์ได้');
+    // }
 
-    if (getData.connect) {
-      if (getData.response.result == true) {
+  }
+
+  public insertGroup = async (groupPlus) => {
+
+    console.log(this.nameTh);
+
+    let v = this.namegroup + '.' + groupPlus;
+    console.log(v);
+    let formData = new FormData();
+    formData.append('groupName',v);
+    formData.append('branch',"this.branch_id");
+    formData.append('userID',"this.nameTh");
+
+
+    let getData: any = await this.http.post('admin/AddGroup', formData)
+ console.log(getData)
+      if (getData.connect) {
         Swal.fire('เพิ่มข้อมูลเสร็จสิ้น', '', 'success');
-        this.getGroup();
       } else {
         Swal.fire('เพิ่มข้อมูลไม่ได้', '', 'error');
       }
-    } else {
-      Swal.fire('ไม่สามารถเชื่อมต่อเซิร์ฟเวอร์ได้!', '', 'success');
-    }
+
+
   };
 
   public getGroup = async () => {
@@ -116,5 +142,7 @@ export class GroupComponent implements OnInit {
     });
   };
 
-
+  public test (Sushi){
+    console.log(Sushi)
+  }
 }

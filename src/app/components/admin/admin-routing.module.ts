@@ -25,7 +25,7 @@ const routes: Routes = [
       ] },
       {
         path: "",
-        redirectTo: "/admin/manage-data",
+        redirectTo: "/admin",
         pathMatch: "full"
       },
       {
@@ -36,7 +36,7 @@ const routes: Routes = [
   },
   {
     path: "",
-    redirectTo: "/admin/manage-data",
+    redirectTo: "/admin",
     pathMatch: "full"
   },
 
