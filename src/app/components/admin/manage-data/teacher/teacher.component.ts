@@ -160,4 +160,34 @@ export class TeacherComponent implements OnInit {
     //   Swal.fire('ไม่สามารถเชื่อมต่อเซิร์ฟเวอร์ได้!', '', 'error');
     // }
   };
+
+  public deleteGroup = async (id: any) => {
+    delete_Teacher: id;
+
+
+    this.http.confirmAlert('ลบรายการนี้หรือไม่').then(async (value: any) => {
+      if (value) {
+        let getData: any = await this.http.post(
+          'admin/delTeacher/' + id
+        );
+        console.log(getData);
+        if (getData.connect) {
+          if (getData.response.rowCount > 0) {
+            Swal.fire({
+              position: 'top',
+              icon: 'success',
+              title: 'ลบข้อมูลสำเร็จ',
+              showConfirmButton: false,
+              timer: 1500,
+            });
+            this.getTeacher();
+          } else {
+            Swal.fire('ไม่สามารถลบข้อมูลได้!', '', 'error');
+          }
+        }else{
+          Swal.fire('ไม่สามารถลบข้อมูลได้!', '', 'error');
+        }
+      }
+    });
+  };
 }

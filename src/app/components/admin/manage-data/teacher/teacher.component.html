@@ -62,11 +62,11 @@
           </mat-form-field>
           <br />
           ชื่อ : &nbsp;&nbsp;<mat-form-field class="example-full-width">
-            <input matInput placeholder="กรอกชื่อ" name="lname"  required ngModel #lname/>
+            <input matInput placeholder="กรอกชื่อ" name="fname"  required ngModel #fname/>
           </mat-form-field>
           <br />
           นาสกุล : &nbsp;&nbsp;<mat-form-field class="example-full-width">
-            <input matInput placeholder="กรอกนาสกุล" name="fname" required ngModel #fname/>
+            <input matInput placeholder="กรอกนาสกุล" name="lname" required ngModel #lname/>
           </mat-form-field>
           <br />
           สาขาวิชา : &nbsp;&nbsp; {{name_th}}
@@ -119,9 +119,8 @@
       <td>{{ i.fname }}</td>
       <td>{{ i.lname }}</td>
       <td>{{ i.name }}</td>
-      <td><i class="fas fa-edit" style="font-size: 18px;" title="อัพเดทข้อมูล"></i> &nbsp;&nbsp;&nbsp;
-        <i class="fas fa-trash-alt"  style="font-size: 18px;color: red;" title="ลบข้อมูล"
-       ></i>
+      <td><i class="fas fa-edit" style="font-size: 18px;cursor: pointer;" title="อัพเดทข้อมูล" ></i> &nbsp;&nbsp;&nbsp;
+        <span (click)="deleteGroup(i.username)"><i class="fas fa-trash-alt"  style="font-size: 18px;color: red;cursor: pointer;" title="ลบข้อมูล"></i></span>
       </td>
     </tr>
   </tbody>
