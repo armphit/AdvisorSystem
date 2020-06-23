@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { HttpService } from 'src/app/services/http.service';
 import Swal from 'sweetalert2';
-import { NgForm } from '@angular/forms';
+import { NgForm, FormBuilder, Validators, FormGroup } from '@angular/forms';
 
 @Component({
   selector: 'app-teacher',
@@ -21,11 +21,15 @@ export class TeacherComponent implements OnInit {
   public getBranch_head:any= null;
   public dataTeacher: any=null;
   public BranchHead: any=null;
-  public nameBH: any=null;
+  public nameBH: any='ไม่มีอาจารย์';
+  public data1: FormGroup;
+  public major: any=null;
+  username: any;
+  id: any;
 
 
 
-  constructor(private http: HttpService) {
+  constructor(private http: HttpService,private formBuilder: FormBuilder) {
     this.getMajor();
 
 
@@ -34,7 +38,14 @@ export class TeacherComponent implements OnInit {
 
   }
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    this.data1 = this.formBuilder.group({
+      prefix: ['', Validators.required],
+      fname: ['', Validators.required],
+      lname: ['', Validators.required],
+      major: ['', Validators.required],
+    });
+  }
 
   public getMajor = async () => {
     let getData: any = await this.http.get('admin/branch');
@@ -60,18 +71,7 @@ export class TeacherComponent implements OnInit {
 
     console.log(this.branch_id)
   }
-  // public checkTeacher(e) {
 
-  //   if(e){
-  //     this.getBranch_head = this.branch_id
-  //      console.log(this.getBranch_head)
-  //   }else{
-  //     this.getBranch_head;
-  //     console.log(this.getBranch_head)
-  //   }
-
-
-  // }
 
   public addTeacher = async (data: NgForm) => {
 
@@ -100,19 +100,6 @@ export class TeacherComponent implements OnInit {
 
   };
 
-  // public getGroup = async () => {
-  //   group:this.branch_id;
-  //   let getData: any = await this.http.get('admin/getStudy_group_branch/'+this.branch_id);
-  //   if (getData.connect) {
-  //     if (getData.response.rowCount > 0) {
-  //       this.datagroup = getData.response.result;
-  //     } else {
-  //       this.datagroup = null;
-  //     }
-  //   } else {
-  //     Swal.fire('ไม่สามารถเชื่อมต่อเซิร์ฟเวอร์ได้!', '', 'error');
-  //   }
-  // };
 
   public getTeacher = async () => {
 
@@ -149,24 +136,10 @@ export class TeacherComponent implements OnInit {
       return array;
     }
   };
-  // public getBranchHead = async () => {
 
-  //   branch_head:this.branch_id;
-  //   console.log(await this.http.post('admin/getUser_branch_head/'+this.branch_id))
-  //   //let getData: any = await this.http.post('admin/getUser_branch_head/'+this.branch_id);
-
-  //   // if (getData.connect) {
-  //   //   if (getData.response.rowCount > 0) {
-  //   //     this.BranchHead = getData.response.result;
-  //   //   } else {
-  //   //     this.BranchHead = null;
-  //   //   }
-  //   // } else {
-  //   //   Swal.fire('ไม่สามารถเชื่อมต่อเซิร์ฟเวอร์ได้!', '', 'error');
-  //   // }
-  // };
 
   public deleteGroup = async (id: any) => {
+    console.log(id)
     delete_Teacher: id;
 
 
@@ -214,4 +187,57 @@ export class TeacherComponent implements OnInit {
       Swal.fire('ไม่สามารถเชื่อมต่อเซิร์ฟเวอร์ได้!', '', 'error');
     }
   };
+
+  public updateTC = (
+    username: any,
+    titlename: any,
+    fname: any,
+    lname: any
+  ) => {
+    this.username=username
+
+
+    this.data1 = this.formBuilder.group({
+      code:username,
+      prefix: [titlename, Validators.required],
+      fname: [fname, Validators.required],
+      lname: [lname, Validators.required],
+      major: [, Validators.required],
+    });
+  };
+
+  public updateTeacher = () => {
+    this.username
+    console.log(this.data1.value);
+
+
+  }
+  public getIDBranchHead  = async (username:any) => {
+    this.id =username
+  }
+  public updateBranchHead  = async () => {
+console.log(this.id)
+console.log(this.branch_id)
+
+let formData = new FormData();
+formData.append('branch',this.branch_id);
+    formData.append('ID', this.id);
+
+
+    let getData: any = await this.http.post('admin/updateBranchUser', formData);
+    console.log( getData);
+    if (getData.connect) {
+      if (getData.response.rowCount>0) {
+        Swal.fire('แก้ไขข้อมูลเสร็จสิ้น', '', 'success');
+        setTimeout(function(){location.reload()}, 2000);
+      } else {
+        Swal.fire('แก้ไขข้อมูลไม่สำเร็จ', '', 'error');
+      }
+    } else {
+      Swal.fire('ไม่สามารถเชื่อมต่อเซิร์ฟเวอร์ได้!', '', 'error');
+    }
+  }
+
+
+
 }

@@ -18,12 +18,10 @@ export class GroupComponent implements OnInit {
   public TeacherID: any = null;
   public dataGroup: any = null;
   public nameBH: any = null;
-
+  id: any;
 
   constructor(private http: HttpService) {
     this.getMajor();
-
-
   }
 
   ngOnInit(): void {}
@@ -41,9 +39,16 @@ export class GroupComponent implements OnInit {
     }
   };
 
-  public namegroupch(acronym: any, code: any, name_th: any,titlename: any,fname: any,lname: any) {
+  public namegroupch(
+    acronym: any,
+    code: any,
+    name_th: any,
+    titlename: any,
+    fname: any,
+    lname: any
+  ) {
     this.namegroup = acronym;
-    this.nameBH = titlename+fname+'  '+lname
+    this.nameBH = titlename + fname + '  ' + lname;
     this.branch_id = code;
     this.name_th = name_th;
     this.getTeacher();
@@ -69,72 +74,101 @@ export class GroupComponent implements OnInit {
 
   public nameTeacher(code: any, name_th: any, groupPlus: any) {
     this.TeacherID = code;
-    console.log(this.branch_id);
+
   }
 
-  public insertGroup = async (groupPlus:any) => {
+  public insertGroup = async (groupPlus: any) => {
     this.groupTH = this.namegroup + '.' + groupPlus;
     let formData = new FormData();
 
     formData.append('group_name', this.groupTH);
-    formData.append('branch',this.branch_id);
-    formData.append('ID',this.TeacherID);
+    formData.append('branch', this.branch_id);
+    formData.append('ID', this.TeacherID);
 
-    console.log(formData.get('group_name'))
-    console.log(formData.get('branch'))
-    console.log(formData.get('ID'))
+    console.log(formData.get('group_name'));
+    console.log(formData.get('branch'));
+    console.log(formData.get('ID'));
 
-    let getData: any = await this.http.post('admin/AddGroup',formData);
-      console.log(getData);
-      if (getData.connect) {
-        Swal.fire('เพิ่มข้อมูลเสร็จสิ้น', '', 'success');
+    let getData: any = await this.http.post('admin/AddGroup', formData);
+    console.log(getData);
+    if (getData.connect) {
+      Swal.fire('เพิ่มข้อมูลเสร็จสิ้น', '', 'success');
+    } else {
+      Swal.fire('เพิ่มข้อมูลไม่ได้', '', 'error');
+    }
+    this.getGroup();
+  };
+  public getGroup = async () => {
+    branch: this.branch_id;
+    let getData: any = await this.http.get(
+      'admin/getStudy_group/' + this.branch_id
+    );
+
+    if (getData.connect) {
+      if (getData.response.rowCount > 0) {
+        this.dataGroup = getData.response.result;
       } else {
-        Swal.fire('เพิ่มข้อมูลไม่ได้', '', 'error');
+        this.dataGroup = null;
       }
-      this.getGroup();
-    };
-    public getGroup = async () => {
-      branch:this.branch_id
-      let getData: any = await this.http.get('admin/getStudy_group/'+this.branch_id);
-      console.log(getData);
-      if (getData.connect) {
-        if (getData.response.rowCount > 0) {
-          this.dataGroup = getData.response.result;
-        } else {
-          this.dataGroup = null;
-        }console.log(this.dataGroup);
-      } else {
-        Swal.fire('ไม่สามารถเชื่อมต่อเซิร์ฟเวอร์ได้!', '', 'error');
-      }
-    };
+    } else {
+      Swal.fire('ไม่สามารถเชื่อมต่อเซิร์ฟเวอร์ได้!', '', 'error');
+    }
+  };
 
-    public deleteGroup = async (group_id: any) => {
-      delete_group: group_id;
+  public deleteGroup = async (group_id: any) => {
+    delete_group: group_id;
 
-
-      this.http.confirmAlert('ลบรายการนี้หรือไม่').then(async (value: any) => {
-        if (value) {
-          let getData: any = await this.http.post(
-            'admin/delStudy_group/' + group_id
-          );
-          console.log(getData);
-          if (getData.connect) {
-            if (getData.response.rowCount > 0) {
-              Swal.fire({
-                position: 'top',
-                icon: 'success',
-                title: 'ลบข้อมูลสำเร็จ',
-                showConfirmButton: false,
-                timer: 1500,
-              });
-              this.getGroup();
-            } else {
-              Swal.fire('ไม่สามารถลบข้อมูลได้!', '', 'error');
-            }
+    this.http.confirmAlert('ลบรายการนี้หรือไม่').then(async (value: any) => {
+      if (value) {
+        let getData: any = await this.http.post(
+          'admin/delStudy_group/' + group_id
+        );
+        console.log(getData);
+        if (getData.connect) {
+          if (getData.response.rowCount > 0) {
+            Swal.fire({
+              position: 'top',
+              icon: 'success',
+              title: 'ลบข้อมูลสำเร็จ',
+              showConfirmButton: false,
+              timer: 1500,
+            });
+            this.getGroup();
+          } else {
+            Swal.fire('ไม่สามารถลบข้อมูลได้!', '', 'error');
           }
         }
-      });
-    };
+      }
+    });
+  };
 
 
+  public getIDgroup = async (id: any) => {
+    this.id = id;
+  };
+
+
+  public updateGroup = async () => {
+    console.log(this.id);
+    console.log(this.TeacherID);
+
+    let formData = new FormData();
+    formData.append('ID',this.TeacherID );
+    formData.append('group', this.id);
+
+
+    let getData: any = await this.http.post('admin/updateGroup', formData);
+    console.log(getData);
+    if (getData.connect) {
+      if (getData.response.rowCount > 0) {
+        Swal.fire('แก้ไขข้อมูลเสร็จสิ้น', '', 'success');
+
+      } else {
+        Swal.fire('แก้ไขข้อมูลไม่สำเร็จ', '', 'error');
+      }
+    } else {
+      Swal.fire('ไม่สามารถเชื่อมต่อเซิร์ฟเวอร์ได้!', '', 'error');
+    }
+    this.getGroup();
+  };
 }

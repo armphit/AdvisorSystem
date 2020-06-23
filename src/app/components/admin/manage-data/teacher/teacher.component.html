@@ -1,22 +1,30 @@
 <div class="panel-body" style="margin-left: 10px; margin-right: 10px;">
-  สาขาวิชา: &nbsp;
-  <mat-form-field *ngIf="datamajor" style="width: 30%;">
-    <mat-label>{{ "โปรดเลือกสาขาวิชา" }}</mat-label>
-    <mat-select required>
-      <mat-option
-        *ngFor="let i of datamajor; let x = index"
-        [value]="i.name"
-        (click)="namegroupch(i.acronym, i.branch_id, i.name,i.titlename,i.fname,i.lname)"
-      >
-        {{ i.name }}
-      </mat-option>
-    </mat-select>
-  </mat-form-field>
-  <br />
+<mat-form-field *ngIf="datamajor" style="width: 20%;">
+  <mat-label>{{ "โปรดเลือกสาขาวิชา" }}</mat-label>
+  <mat-select required>
+    <mat-option
+      *ngFor="let i of datamajor; let x = index"
+      [value]="i.name"
+      (click)="
+        namegroupch(
+          i.acronym,
+          i.branch_id,
+          i.name,
+          i.titlename,
+          i.fname,
+          i.lname
+        )
+      "
+    >
+      {{ i.name }}
+    </mat-option>
+  </mat-select>
+</mat-form-field>
+<br />
 
-  <span *ngIf="branch_id != null"
-    >หัวหน้าสาขาวิชา: &nbsp;&nbsp; <span [hidden]=nameBH!= null>{{nameBH}}</span> &nbsp;&nbsp;
 
+
+  <span *ngIf="branch_id != null">หัวหน้าสาขาวิชา:&nbsp;&nbsp;{{ nameBH }}&nbsp;&nbsp;
     <button
       type="button"
       class="btn btn-danger btn-sm"
@@ -26,7 +34,6 @@
       <i class="fas fa-edit"></i>&nbsp; แก้ไขหัวหน้าสาขาวิชา
     </button>
   </span>
-
   <!-- The Modal -->
   <div class="modal" id="updateBH">
     <div class="modal-dialog">
@@ -48,6 +55,7 @@
               <mat-option
                 *ngFor="let i of BranchHead"
                 [value]="i.username"
+              (click)="getIDBranchHead(i.username)"
 
               >
               {{ i.titlename }}{{ i.fname }}&nbsp;&nbsp;{{ i.lname }}
@@ -61,6 +69,9 @@
           <button type="button" class="btn btn-danger" data-dismiss="modal">
             Close
           </button>
+          <button type="button" class="btn btn-success" (click)="updateBranchHead()">
+            Save
+          </button>
         </div>
       </div>
     </div>
@@ -68,7 +79,6 @@
   <br />
   <br />
 
-  <!-- Button trigger modal -->
   <button
     type="button"
     class="btn btn-primary"
@@ -78,6 +88,7 @@
   >
     เพิ่มอาจารย์
   </button>
+
   <!-- The Modal -->
   <div class="modal" id="addTeacher">
     <div class="modal-dialog">
@@ -148,7 +159,7 @@
             <button type="button" class="btn btn-danger" data-dismiss="modal">
               Close
             </button>
-            <button type="submit" class="btn btn-success">
+            <button type="submit" class="btn btn-success" data-dismiss="modal">
               Save
             </button>
           </div>
@@ -156,9 +167,8 @@
       </div>
     </div>
   </div>
-</div>
 
-<mat-form-field
+  <mat-form-field
   class="example-full-width"
   style="float: right; width: 500px; padding-right: 50px;"
   [hidden]="!branch_id"
@@ -182,19 +192,22 @@
     <tr *ngFor="let i of onSearchTeacher(dataTeacher, se.value); let x = index">
       <th scope="row">{{ x + 1 }}</th>
       <td>
+        {{ i.username }}
+      </td>
+      <td>
         {{ i.titlename }}
       </td>
       <td>{{ i.fname }}</td>
       <td>{{ i.lname }}</td>
       <td>{{ i.name }}</td>
       <td>
-        <i
+        <span (click)="updateTC(i.username,i.titlename,i.fname,i.lname)"><i
           class="fas fa-edit"
           style="font-size: 18px; cursor: pointer;"
           title="อัพเดทข้อมูล"
           data-toggle="modal"
           data-target="#updateTC"
-        ></i>
+        ></i></span>
         &nbsp;&nbsp;&nbsp;
         <span (click)="deleteGroup(i.username)"
           ><i
@@ -219,30 +232,16 @@
           &times;
         </button>
       </div>
-
+      <form [formGroup]="data1" (ngSubmit)="data1.valid ? updateTeacher() : ''">
       <!-- Modal body -->
       <div class="modal-body">
-        รหัสประจำตัวอาจารย์ : &nbsp;&nbsp;<mat-form-field
-          class="example-full-width"
-        >
-          <input
-            matInput
-            placeholder="กรอกรหัสประจำตัวอาจารย์"
-            name="code"
-            required
-            ngModel
-            #code
-          />
-        </mat-form-field>
+
         <br />
         คำนำหน้า : &nbsp;&nbsp;<mat-form-field class="example-full-width">
           <input
             matInput
             placeholder="กรอกคำนำหน้า"
-            name="prefix"
-            required
-            ngModel
-            #prefix
+            formControlName="prefix" required ngModel
           />
         </mat-form-field>
         <br />
@@ -250,10 +249,7 @@
           <input
             matInput
             placeholder="กรอกชื่อ"
-            name="fname"
-            required
-            ngModel
-            #fname
+            formControlName="fname" required ngModel
           />
         </mat-form-field>
         <br />
@@ -261,20 +257,17 @@
           <input
             matInput
             placeholder="กรอกนาสกุล"
-            name="lname"
-            required
-            ngModel
-            #lname
+            formControlName="lname" required ngModel
           />
         </mat-form-field>
         <br />
         สาขาวิชา :
         <mat-form-field *ngIf="datamajor" style="width: 30%;">
-          <mat-label>{{ "โปรดเลือกสาขาวิชา*" }}</mat-label>
-          <mat-select>
+          <mat-label>{{ name_th}}</mat-label>
+          <mat-select formControlName="major" required ngModel>
             <mat-option
               *ngFor="let i of datamajor; let x = index"
-              [value]="i.name"
+              [value]="i.branch_id"
             >
               {{ i.name }}
             </mat-option>
@@ -289,7 +282,11 @@
         <button type="button" class="btn btn-danger" data-dismiss="modal">
           Close
         </button>
+        <button type="submit" class="btn btn-success"  >
+          save
+        </button>
       </div>
+    </form>
     </div>
   </div>
-</div>
+
