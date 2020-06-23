@@ -21,10 +21,13 @@ export class TeacherComponent implements OnInit {
   public getBranch_head:any= null;
   public dataTeacher: any=null;
   public BranchHead: any=null;
+  public nameBH: any=null;
+
 
 
   constructor(private http: HttpService) {
     this.getMajor();
+
 
 
 
@@ -47,11 +50,13 @@ export class TeacherComponent implements OnInit {
     }
   };
 
-  public namegroupch(acronym: any, code: any, name_th: any) {
+  public namegroupch(acronym: any, code: any, name_th: any,titlename: any,fname: any,lname: any) {
+    this.nameBH = titlename+fname+'  '+lname
     this.namegroup = acronym;
     this.branch_id = code;
     this.name_th = name_th;
     this.getTeacher();
+    this.getbranchUser();
 
     console.log(this.branch_id)
   }
@@ -83,10 +88,10 @@ export class TeacherComponent implements OnInit {
     let getData: any = await this.http.post('admin/setTeacher', formData);
     console.log( getData);
     if (getData.connect) {
-      if (getData.connect == true) {
+      if (getData.response.success) {
         Swal.fire('เพิ่มข้อมูลเสร็จสิ้น', '', 'success');
       } else {
-        Swal.fire('เพิ่มข้อมูลไม่ได้', '', 'error');
+        Swal.fire('เพิ่มข้อมูลไม่สำเร็จ', '', 'error');
       }
     } else {
       Swal.fire('ไม่สามารถเชื่อมต่อเซิร์ฟเวอร์ได้!', '', 'error');
@@ -144,22 +149,22 @@ export class TeacherComponent implements OnInit {
       return array;
     }
   };
-  public getBranchHead = async () => {
+  // public getBranchHead = async () => {
 
-    branch_head:this.branch_id;
-    console.log(await this.http.post('admin/getUser_branch_head/'+this.branch_id))
-    //let getData: any = await this.http.post('admin/getUser_branch_head/'+this.branch_id);
+  //   branch_head:this.branch_id;
+  //   console.log(await this.http.post('admin/getUser_branch_head/'+this.branch_id))
+  //   //let getData: any = await this.http.post('admin/getUser_branch_head/'+this.branch_id);
 
-    // if (getData.connect) {
-    //   if (getData.response.rowCount > 0) {
-    //     this.BranchHead = getData.response.result;
-    //   } else {
-    //     this.BranchHead = null;
-    //   }
-    // } else {
-    //   Swal.fire('ไม่สามารถเชื่อมต่อเซิร์ฟเวอร์ได้!', '', 'error');
-    // }
-  };
+  //   // if (getData.connect) {
+  //   //   if (getData.response.rowCount > 0) {
+  //   //     this.BranchHead = getData.response.result;
+  //   //   } else {
+  //   //     this.BranchHead = null;
+  //   //   }
+  //   // } else {
+  //   //   Swal.fire('ไม่สามารถเชื่อมต่อเซิร์ฟเวอร์ได้!', '', 'error');
+  //   // }
+  // };
 
   public deleteGroup = async (id: any) => {
     delete_Teacher: id;
@@ -189,5 +194,24 @@ export class TeacherComponent implements OnInit {
         }
       }
     });
+  };
+
+  public getbranchUser = async () => {
+
+    let formData = new FormData();
+
+    formData.append('branch',this.branch_id );
+
+    let getData: any = await this.http.post('admin/getBranchUser',formData);
+ console.log(getData)
+    if (getData.connect) {
+      if (getData.response.rowCount > 0) {
+        this.BranchHead = getData.response.result;
+      } else {
+        this.BranchHead = null;
+      }
+    } else {
+      Swal.fire('ไม่สามารถเชื่อมต่อเซิร์ฟเวอร์ได้!', '', 'error');
+    }
   };
 }

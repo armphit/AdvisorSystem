@@ -17,10 +17,13 @@ export class GroupComponent implements OnInit {
   public groupTH: any = null;
   public TeacherID: any = null;
   public dataGroup: any = null;
+  public nameBH: any = null;
+
 
   constructor(private http: HttpService) {
     this.getMajor();
-    this.getGroup();
+
+
   }
 
   ngOnInit(): void {}
@@ -38,18 +41,19 @@ export class GroupComponent implements OnInit {
     }
   };
 
-  public namegroupch(acronym: any, code: any, name_th: any) {
+  public namegroupch(acronym: any, code: any, name_th: any,titlename: any,fname: any,lname: any) {
     this.namegroup = acronym;
+    this.nameBH = titlename+fname+'  '+lname
     this.branch_id = code;
     this.name_th = name_th;
-    console.log(this.branch_id);
     this.getTeacher();
+    this.getGroup();
   }
 
   public getTeacher = async () => {
     branch: this.branch_id;
     let getData: any = await this.http.post(
-      'admin/getStudy_group_User/' + this.branch_id
+      'admin/getTeacher_group_NULL/' + this.branch_id
     );
     console.log(getData);
     if (getData.connect) {
@@ -65,13 +69,11 @@ export class GroupComponent implements OnInit {
 
   public nameTeacher(code: any, name_th: any, groupPlus: any) {
     this.TeacherID = code;
-    let g = this.namegroup + '.' + groupPlus;
-    this.groupTH = g;
-    console.log(this.groupTH);
     console.log(this.branch_id);
   }
 
-  public insertGroup = async () => {
+  public insertGroup = async (groupPlus:any) => {
+    this.groupTH = this.namegroup + '.' + groupPlus;
     let formData = new FormData();
 
     formData.append('group_name', this.groupTH);
@@ -92,8 +94,9 @@ export class GroupComponent implements OnInit {
       this.getGroup();
     };
     public getGroup = async () => {
-      let getData: any = await this.http.post('admin/getStudy_group_User');
-      console.log(getData.response);
+      branch:this.branch_id
+      let getData: any = await this.http.get('admin/getStudy_group/'+this.branch_id);
+      console.log(getData);
       if (getData.connect) {
         if (getData.response.rowCount > 0) {
           this.dataGroup = getData.response.result;
@@ -132,4 +135,6 @@ export class GroupComponent implements OnInit {
         }
       });
     };
+
+
 }

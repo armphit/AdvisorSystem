@@ -6,7 +6,7 @@
       <mat-option
         *ngFor="let i of datamajor; let x = index"
         [value]="i.name"
-        (click)="namegroupch(i.acronym, i.branch_id, i.name)"
+        (click)="namegroupch(i.acronym, i.branch_id, i.name,i.titlename,i.fname,i.lname)"
       >
         {{ i.name }}
       </mat-option>
@@ -14,7 +14,7 @@
   </mat-form-field>
   <br />
 
-  <span *ngIf="branch_id!=null">หัวหน้าสาขาวิชา:  &nbsp;&nbsp;</span> <br>
+  <span *ngIf="branch_id!=null">หัวหน้าสาขาวิชา:&nbsp;&nbsp;{{nameBH}}&nbsp;&nbsp;</span> <br>
 
   <button
   type="button"
@@ -22,6 +22,7 @@
   data-toggle="modal"
   data-target="#addTeacher"
   *ngIf="branch_id!=null"
+
 >
   เพิ่มกลุ่มเรียน
 </button>
@@ -66,7 +67,7 @@
       <!-- Modal footer -->
       <div class="modal-footer">
         <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
-        <button type="button" class="btn btn-success" (click)="insertGroup ()">Save</button>
+        <button type="button" class="btn btn-success" (click)="insertGroup (groupPlus.value)">Save</button>
       </div>
 
     </div>
@@ -88,6 +89,9 @@
       <th scope="row">{{ x + 1 }}</th>
       <td>
         {{ i.study_group_name }}
+      </td>
+      <td>
+        {{ i.name }}
       </td>
       <td>
         {{ i.titlename }}{{ i.fname }}&nbsp;&nbsp;{{ i.lname }}
@@ -116,7 +120,18 @@
 
       <!-- Modal body -->
       <div class="modal-body">
-        Modal body..
+        อาจารย์ที่ปรึกษา :&nbsp;&nbsp;<mat-form-field style="width: 50%;" >
+          <mat-label>{{ "โปรดเลือกอาจารย์ที่ปรึกษา" }}</mat-label>
+          <mat-select required>
+            <mat-option
+              *ngFor="let i of dataTeacher; let x = index"
+              [value]="i.username"
+              (click)="nameTeacher(i.username,i.name,groupPlus.value)"
+            >
+              {{i.titlename}}{{i.fname}}&nbsp;{{i.lname}}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
       </div>
 
       <!-- Modal footer -->
