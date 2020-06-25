@@ -74,7 +74,6 @@ export class GroupComponent implements OnInit {
 
   public nameTeacher(code: any, name_th: any, groupPlus: any) {
     this.TeacherID = code;
-
   }
 
   public insertGroup = async (groupPlus: any) => {
@@ -142,27 +141,23 @@ export class GroupComponent implements OnInit {
     });
   };
 
-
   public getIDgroup = async (id: any) => {
     this.id = id;
   };
-
 
   public updateGroup = async () => {
     console.log(this.id);
     console.log(this.TeacherID);
 
     let formData = new FormData();
-    formData.append('ID',this.TeacherID );
+    formData.append('ID', this.TeacherID);
     formData.append('group', this.id);
-
 
     let getData: any = await this.http.post('admin/updateGroup', formData);
     console.log(getData);
     if (getData.connect) {
       if (getData.response.rowCount > 0) {
         Swal.fire('แก้ไขข้อมูลเสร็จสิ้น', '', 'success');
-
       } else {
         Swal.fire('แก้ไขข้อมูลไม่สำเร็จ', '', 'error');
       }

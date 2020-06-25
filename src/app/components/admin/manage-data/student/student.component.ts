@@ -24,21 +24,35 @@ export class StudentComponent implements OnInit {
   public status: any = 'กำลังศึกษา';
   public nameBH: any = null;
   public data1: FormGroup;
+  public data2: FormGroup;
   public major: any = null;
   public group: any = null;
   public dataGroup1: any = null;
+  public branch: any = null;
+  public nameST: any = null;
 
   constructor(private http: HttpService, private formBuilder: FormBuilder) {
     this.getMajor();
   }
 
   ngOnInit() {
+    this.data2 = this.formBuilder.group({
+      code: ['', Validators.required],
+      prefix: ['', Validators.required],
+      fname: ['', Validators.required],
+      lname: ['', Validators.required],
+      tel: ['', Validators.required],
+      email: ['', Validators.email],
+    });
+
     this.data1 = this.formBuilder.group({
       prefix: ['', Validators.required],
       fname: ['', Validators.required],
       lname: ['', Validators.required],
       major: ['', Validators.required],
       group: ['', Validators.required],
+      tel: ['', Validators.required],
+      email: ['', Validators.email],
     });
   }
 
@@ -71,32 +85,25 @@ export class StudentComponent implements OnInit {
     this.name_th = name_th;
     this.nameBH = titlename + fname + '  ' + lname;
 
-
-
     this.getGroup();
-
   }
 
   public getGroup = async () => {
+    branch: this.branch_id;
 
-
-
-      branch: this.branch_id;
-
-      let getData: any = await this.http.get(
-        'admin/getStudy_group/' + this.branch_id
-      );
-      console.log(getData.response.result);
-      if (getData.connect) {
-        if (getData.response.rowCount > 0) {
-          this.dataGroup = getData.response.result;
-        } else {
-          this.dataGroup = null;
-        }
+    let getData: any = await this.http.get(
+      'admin/getStudy_group/' + this.branch_id
+    );
+    console.log(getData.response.result);
+    if (getData.connect) {
+      if (getData.response.rowCount > 0) {
+        this.dataGroup = getData.response.result;
       } else {
-        Swal.fire('ไม่สามารถเชื่อมต่อเซิร์ฟเวอร์ได้!', '', 'error');
+        this.dataGroup = null;
       }
-
+    } else {
+      Swal.fire('ไม่สามารถเชื่อมต่อเซิร์ฟเวอร์ได้!', '', 'error');
+    }
   };
 
   public nameGroup_Student(
@@ -116,21 +123,34 @@ export class StudentComponent implements OnInit {
     this.getStudent();
   }
 
-  public addStudent = async (data: NgForm) => {
-    let formData = new FormData();
+  public addStudent = async () => {
+    let data3 = new FormData();
 
-    formData.append('name_status_name', this.status_name);
-    formData.append('branch', this.branch_id);
-    formData.append('group_code', this.groupID);
+    let data = {
+      code: this.data2.value.code,
+      prefix: this.data2.value.prefix,
+      fname: this.data2.value.fname,
+      lname: this.data2.value.lname,
+      name_status_name: this.status_name,
+      branch: this.branch_id,
+      group_code: this.groupID,
+      tel: this.data2.value.tel,
+      email: this.data2.value.email,
+    };
 
-    Object.keys(data.value).forEach((key) => {
-      formData.append('' + key, data.value[key]);
+    Object.keys(data).forEach((key) => {
+      data3.append('' + key, data[key]);
     });
-    let getData: any = await this.http.post('admin/setStudent', formData);
+
+    console.log(JSON.stringify(data));
+
+    let getData: any = await this.http.post('admin/setStudent', data3);
     console.log(getData);
     if (getData.connect) {
       if (getData.response.result) {
         Swal.fire('เพิ่มข้อมูลเสร็จสิ้น', '', 'success');
+        let win: any = window;
+        win.$('#addStudent').modal('hide');
       } else {
         Swal.fire('เพิ่มข้อมูลไม่ได้', '', 'error');
       }
@@ -175,6 +195,7 @@ export class StudentComponent implements OnInit {
               showConfirmButton: false,
               timer: 1500,
             });
+
             this.getStudent();
           } else {
             Swal.fire('ไม่สามารถลบข้อมูลได้!', '', 'error');
@@ -193,33 +214,71 @@ export class StudentComponent implements OnInit {
     lname: any,
     major: any,
     group: any,
-    branch: any
+    branch: any,
+    tel: any,
+    email: any
   ) => {
     this.major = major;
-    console.log(branch);
+    this.nameST = username;
 
-    console.log(major);
     this.data1 = this.formBuilder.group({
-      code: username,
+      code: [username],
       prefix: [titlename, Validators.required],
       fname: [fname, Validators.required],
       lname: [lname, Validators.required],
-      major: [, Validators.required],
-      group: [, Validators.required],
+      major: [branch, Validators.required],
+      group: [group, Validators.required],
+      tel: [tel, Validators.required],
+      email: [email, Validators.required],
     });
+    console.log(this.data1);
     this.getGroup1();
   };
-  public updateStudent = () => {
-    console.log(this.data1.value.major);
-    console.log(this.data1.value);
-    this.getGroup1()
+  public updateStudent = async () => {
+    let data2 = {
+      ID: this.data1.value.code,
+      prefix: this.data1.value.prefix,
+      fname: this.data1.value.fname,
+      lname: this.data1.value.lname,
+      branch: this.data1.value.major,
+      group_code: this.data1.value.group,
+      tel: this.data1.value.tel,
+      email: this.data1.value.email,
+    };
+    console.log(data2);
+    let data = new FormData();
+    Object.keys(data2).forEach((key) => {
+      data.append('' + key, data2[key]);
+    });
+    let getData: any = await this.http.post('admin/updateStudent', data);
+    console.log(getData);
+    if (getData.connect) {
+      if (getData.response.result) {
+        Swal.fire('เพิ่มข้อมูลเสร็จสิ้น', '', 'success');
+        let win: any = window;
+        win.$('#addStudent').modal('hide');
+        this.getStudent();
+      } else {
+        Swal.fire('เพิ่มข้อมูลไม่ได้', '', 'error');
+      }
+    } else {
+      Swal.fire('ไม่สามารถเชื่อมต่อเซิร์ฟเวอร์ได้!', '', 'error');
+    }
+  };
 
-  }
+  public getBranch = async (branch) => {
+    this.branch = branch;
+    console.log(this.data1.value.major);
+
+    this.getGroup1();
+  };
 
   public getGroup1 = async () => {
-    branch:this.data1.value.major
-    let getData: any = await this.http.get('admin/getStudy_group/'+this.data1.value.major);
-    console.log(getData)
+    branch: this.branch;
+    let getData: any = await this.http.get(
+      'admin/getStudy_group/' + this.branch
+    );
+    console.log(this.branch);
     if (getData.connect) {
       if (getData.response.rowCount > 0) {
         this.dataGroup1 = getData.response.result;

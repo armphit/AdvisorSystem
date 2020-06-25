@@ -28,7 +28,7 @@
   >
   <br />
 
-  <span *ngIf="branch_id != null"ฟ
+  <span *ngIf="branch_id != null" ฟ
     >กลุ่มเรียน :&nbsp;&nbsp;<mat-form-field>
       <mat-label>{{ "โปรดเลือกกลุ่มเรียน" }}</mat-label>
       <mat-select required>
@@ -74,10 +74,10 @@
   <div class="modal" id="addStudent">
     <div class="modal-dialog">
       <div class="modal-content">
-        <form #formChange="ngForm" (ngSubmit)="addStudent(formChange)">
+        <form [formGroup]="data2" (ngSubmit)="data2.valid ? addStudent() : ''">
           <!-- Modal Header -->
           <div class="modal-header">
-            <h4 class="modal-title">Modal Heading</h4>
+            <h4 class="modal-title">เพิ่มนักศึกษา</h4>
             <button type="button" class="close" data-dismiss="modal">
               &times;
             </button>
@@ -94,10 +94,9 @@
               <input
                 matInput
                 placeholder="กรอกรหัสประจำตัวนักศึกษา"
-                name="code"
+                formControlName="code"
                 required
                 ngModel
-                #code
               />
             </mat-form-field>
             <br />
@@ -105,10 +104,9 @@
               <input
                 matInput
                 placeholder="กรอกคำนำหน้า"
-                name="prefix"
+                formControlName="prefix"
                 required
                 ngModel
-                #prefix
               />
             </mat-form-field>
             <br />
@@ -116,10 +114,9 @@
               <input
                 matInput
                 placeholder="กรอกชื่อ"
-                name="fname"
+                formControlName="fname"
                 required
                 ngModel
-                #fname
               />
             </mat-form-field>
             <br />
@@ -127,10 +124,30 @@
               <input
                 matInput
                 placeholder="กรอกนามสกุล"
-                name="lname"
+                formControlName="lname"
                 required
                 ngModel
-                #lname
+              />
+            </mat-form-field>
+            <br />
+
+            เบอร์ติดต่อ :&nbsp;&nbsp;<mat-form-field class="example-full-width">
+              <input
+                matInput
+                placeholder="กรอกเบอร์โทรศัพท์"
+                formControlName="tel"
+                required
+                ngModel
+              />
+            </mat-form-field>
+            <br />
+            Email :&nbsp;&nbsp;<mat-form-field class="example-full-width">
+              <input
+                matInput
+                placeholder="กรอก Email"
+                formControlName="email"
+                required
+                ngModel
               />
             </mat-form-field>
             <br />
@@ -164,9 +181,10 @@
   <thead class="thead-dark">
     <tr>
       <th scope="col">ลำดับ</th>
-      <th scope="col">คำนำหน้า</th>
-      <th scope="col">ชื่อ</th>
-      <th scope="col">นามสกุล</th>
+      <th scope="col">รหัสนักศึกษา</th>
+      <th scope="col">ชื่อนักศึกษา</th>
+      <th scope="col">เบอร์โทรติดต่อ</th>
+      <th scope="col">E-mail</th>
       <th scope="col">สถานะ</th>
       <th scope="col"></th>
     </tr>
@@ -175,14 +193,27 @@
     <tr *ngFor="let i of dataStudent; let x = index">
       <th scope="row">{{ x + 1 }}</th>
       <td>
-        {{ i.titlename }}
+        {{ i.username }}
       </td>
-      <td>{{ i.fname }}</td>
-      <td>{{ i.lname }}</td>
+      <td>{{ i.titlename }}{{ i.fname }}&nbsp;{{ i.lname }}</td>
+      <td>{{ i.phone }}</td>
+      <td>{{ i.e_mail }}</td>
       <td>{{ status }}</td>
       <td>
         <span
-          (click)="updateST(i.username, i.titlename, i.fname, i.lname, i.name,i.group_code,i.branch_code)"
+          (click)="
+            updateST(
+              i.username,
+              i.titlename,
+              i.fname,
+              i.lname,
+              i.name,
+              i.group_code,
+              i.branch_code,
+              i.phone,
+              i.e_mail
+            )
+          "
           ><i
             class="fas fa-edit"
             style="font-size: 18px; cursor: pointer;"
@@ -210,7 +241,7 @@
     <div class="modal-content">
       <!-- Modal Header -->
       <div class="modal-header">
-        <h4 class="modal-title">Modal Heading</h4>
+        <h4 class="modal-title">แก้ไขข้อมูลนักศึกษา</h4>
         <button type="button" class="close" data-dismiss="modal">
           &times;
         </button>
@@ -218,6 +249,9 @@
       <form [formGroup]="data1" (ngSubmit)="data1.valid ? updateStudent() : ''">
         <!-- Modal body -->
         <div class="modal-body">
+          รหัสนักศึกษา :&nbsp;&nbsp;{{ nameST }}
+          <br />
+
           คำนำหน้า : &nbsp;&nbsp;<mat-form-field class="example-full-width">
             <input
               matInput
@@ -249,6 +283,28 @@
           </mat-form-field>
           <br />
 
+          <br />
+
+          เบอร์ติดต่อ :&nbsp;&nbsp;<mat-form-field class="example-full-width">
+            <input
+              matInput
+              placeholder="กรอกเบอร์โทรศัพท์"
+              formControlName="tel"
+              required
+              ngModel
+            />
+          </mat-form-field>
+          <br />
+          Email :&nbsp;&nbsp;<mat-form-field class="example-full-width">
+            <input
+              matInput
+              placeholder="กรอก Email"
+              formControlName="email"
+              required
+              ngModel
+            />
+          </mat-form-field>
+          <br />
           สาขาวิชา :
           <mat-form-field *ngIf="datamajor" style="width: 30%;">
             <mat-label>{{ major }}</mat-label>
@@ -256,24 +312,25 @@
               <mat-option
                 *ngFor="let i of datamajor; let x = index"
                 [value]="i.branch_id"
+                (click)="getBranch(i.branch_id)"
               >
                 {{ i.name }}
               </mat-option>
             </mat-select>
           </mat-form-field>
           <br />
-          <span *ngIf="this.data1.value.major"
-            >กลุ่มเรียน :&nbsp;&nbsp;<mat-form-field>
-      <mat-label>{{ "โปรดเลือกกลุ่มเรียน" }}</mat-label>
-      <mat-select required>
-        <mat-option
-          *ngFor="let i of dataGroup; let x = index"
-          [value]="i.study_group_id"
-        >
-          {{ i.study_group_name }}
-        </mat-option>
-      </mat-select>
-    </mat-form-field></span
+          <span *ngIf="branch">
+            กลุ่มเรียน :&nbsp;&nbsp;<mat-form-field>
+              <mat-label>{{ "โปรดเลือกกลุ่มเรียน" }}</mat-label>
+              <mat-select formControlName="group" required ngModel>
+                <mat-option
+                  *ngFor="let i of dataGroup1; let x = index"
+                  [value]="i.study_group_id"
+                >
+                  {{ i.study_group_name }}
+                </mat-option>
+              </mat-select>
+            </mat-form-field></span
           >
           <br />
         </div>
@@ -283,7 +340,12 @@
         <button type="button" class="btn btn-danger" data-dismiss="modal">
           Close
         </button>
-        <button type="button" class="btn btn-success" (click)="updateStudent()">
+        <button
+          type="button"
+          class="btn btn-success"
+          data-dismiss="modal"
+          (click)="updateStudent()"
+        >
           Save
         </button>
       </div>

@@ -17,25 +17,19 @@ export class TeacherComponent implements OnInit {
   public status_name: any = 'อาจารย์';
   public datagroup: any = null;
   public study_group_id: any = null;
-  public name_group_th: any= null;
-  public getBranch_head:any= null;
-  public dataTeacher: any=null;
-  public BranchHead: any=null;
-  public nameBH: any='ไม่มีอาจารย์';
+  public name_group_th: any = null;
+  public getBranch_head: any = null;
+  public dataTeacher: any = null;
+  public BranchHead: any = null;
+  public nameBH: any = 'ไม่มีอาจารย์';
   public data1: FormGroup;
-  public major: any=null;
+  public major: any = null;
+  public nameTC: any = null;
   username: any;
   id: any;
 
-
-
-  constructor(private http: HttpService,private formBuilder: FormBuilder) {
+  constructor(private http: HttpService, private formBuilder: FormBuilder) {
     this.getMajor();
-
-
-
-
-
   }
 
   ngOnInit(): void {
@@ -44,6 +38,8 @@ export class TeacherComponent implements OnInit {
       fname: ['', Validators.required],
       lname: ['', Validators.required],
       major: ['', Validators.required],
+      tel: ['', Validators.required],
+      email: ['', Validators.email],
     });
   }
 
@@ -61,34 +57,40 @@ export class TeacherComponent implements OnInit {
     }
   };
 
-  public namegroupch(acronym: any, code: any, name_th: any,titlename: any,fname: any,lname: any) {
-    this.nameBH = titlename+fname+'  '+lname
+  public namegroupch(
+    acronym: any,
+    code: any,
+    name_th: any,
+    titlename: any,
+    fname: any,
+    lname: any
+  ) {
+    this.nameBH = titlename + fname + '  ' + lname;
     this.namegroup = acronym;
     this.branch_id = code;
     this.name_th = name_th;
     this.getTeacher();
     this.getbranchUser();
 
-    console.log(this.branch_id)
+    console.log(this.branch_id);
   }
 
-
   public addTeacher = async (data: NgForm) => {
-
-
     let formData = new FormData();
 
     formData.append('name_status_name', this.status_name);
-    formData.append('branch',this.branch_id);
+    formData.append('branch', this.branch_id);
 
     Object.keys(data.value).forEach((key) => {
       formData.append('' + key, data.value[key]);
     });
 
     let getData: any = await this.http.post('admin/setTeacher', formData);
-    console.log( getData);
+    console.log(getData);
     if (getData.connect) {
       if (getData.response.success) {
+        let win: any = window;
+        win.$('#addTeacher').modal('hide');
         Swal.fire('เพิ่มข้อมูลเสร็จสิ้น', '', 'success');
       } else {
         Swal.fire('เพิ่มข้อมูลไม่สำเร็จ', '', 'error');
@@ -97,14 +99,13 @@ export class TeacherComponent implements OnInit {
       Swal.fire('ไม่สามารถเชื่อมต่อเซิร์ฟเวอร์ได้!', '', 'error');
     }
     this.getTeacher();
-
   };
 
-
   public getTeacher = async () => {
-
-    branch_id:this.branch_id;
-    let getData: any = await this.http.post('admin/getUser_status/'+this.branch_id);
+    branch_id: this.branch_id;
+    let getData: any = await this.http.post(
+      'admin/getUser_status/' + this.branch_id
+    );
 
     if (getData.connect) {
       if (getData.response.rowCount > 0) {
@@ -117,37 +118,26 @@ export class TeacherComponent implements OnInit {
     }
   };
 
-
   public onSearchTeacher = (array: any, textsearch: string) => {
     if (textsearch.length > 0) {
       return [
-        ...array.filter(
-          (value) => value.titlename.indexOf(textsearch) > -1
-        ),
-        ...array.filter((value) => value.fname.indexOf(textsearch) > -1
-        ),
-        ...array.filter((value) => value.lname.indexOf(textsearch) > -1
-        ),
-        ...array.filter((value) => value.name.indexOf(textsearch) > -1
-        ),
-
+        ...array.filter((value) => value.titlename.indexOf(textsearch) > -1),
+        ...array.filter((value) => value.fname.indexOf(textsearch) > -1),
+        ...array.filter((value) => value.lname.indexOf(textsearch) > -1),
+        ...array.filter((value) => value.name.indexOf(textsearch) > -1),
       ];
     } else {
       return array;
     }
   };
 
-
   public deleteGroup = async (id: any) => {
-    console.log(id)
+    console.log(id);
     delete_Teacher: id;
-
 
     this.http.confirmAlert('ลบรายการนี้หรือไม่').then(async (value: any) => {
       if (value) {
-        let getData: any = await this.http.post(
-          'admin/delTeacher/' + id
-        );
+        let getData: any = await this.http.post('admin/delTeacher/' + id);
         console.log(getData);
         if (getData.connect) {
           if (getData.response.rowCount > 0) {
@@ -162,7 +152,7 @@ export class TeacherComponent implements OnInit {
           } else {
             Swal.fire('ไม่สามารถลบข้อมูลได้!', '', 'error');
           }
-        }else{
+        } else {
           Swal.fire('ไม่สามารถลบข้อมูลได้!', '', 'error');
         }
       }
@@ -170,13 +160,12 @@ export class TeacherComponent implements OnInit {
   };
 
   public getbranchUser = async () => {
-
     let formData = new FormData();
 
-    formData.append('branch',this.branch_id );
+    formData.append('branch', this.branch_id);
 
-    let getData: any = await this.http.post('admin/getBranchUser',formData);
- console.log(getData)
+    let getData: any = await this.http.post('admin/getBranchUser', formData);
+    console.log(getData);
     if (getData.connect) {
       if (getData.response.rowCount > 0) {
         this.BranchHead = getData.response.result;
@@ -192,52 +181,89 @@ export class TeacherComponent implements OnInit {
     username: any,
     titlename: any,
     fname: any,
-    lname: any
+    lname: any,
+    branch: any,
+    tel: any,
+    email: any
   ) => {
-    this.username=username
-
+    this.nameTC = username;
 
     this.data1 = this.formBuilder.group({
-      code:username,
+      code: [username],
       prefix: [titlename, Validators.required],
       fname: [fname, Validators.required],
       lname: [lname, Validators.required],
-      major: [, Validators.required],
+      major: [branch, Validators.required],
+      tel: [tel, Validators.required],
+      email: [email, Validators.email],
     });
   };
 
-  public updateTeacher = () => {
-    this.username
+  public updateTeacher = async () => {
+    let a = this.formBuilder.group({
+      code: this.data1.value.code,
+      prefix: this.data1.value.prefix,
+      fname: this.data1.value.fname,
+      lname: this.data1.value.lname,
+      major: this.data1.value.major,
+      tel: this.data1.value.tel,
+      email: this.data1.value.email,
+    });
+
+    let data = new FormData();
+    console.log(this.data1.value.code);
+    data.append('code', this.data1.value.code);
+    data.append('prefix', this.data1.value.prefix);
+    data.append('fname', this.data1.value.fname);
+    data.append('lname', this.data1.value.lname);
+    data.append('major', this.data1.value.major);
+    data.append('tel', this.data1.value.tel);
+    data.append('email', this.data1.value.email);
+    // Object.keys(a).forEach((key) => {
+    //   data.append('' + key, a[key]);
+    // });
+
+    let getData: any = await this.http.post('admin/updateTeacher', data);
     console.log(this.data1.value);
+    console.log(getData);
+    if (getData.connect) {
+      if (getData.response.result) {
+        Swal.fire('เพิ่มข้อมูลเสร็จสิ้น', '', 'success');
+        let win: any = window;
+        win.$('#updateTC').modal('hide');
+        this.getTeacher();
+      } else {
+        Swal.fire('เพิ่มข้อมูลไม่ได้', '', 'error');
+      }
+    } else {
+      Swal.fire('ไม่สามารถเชื่อมต่อเซิร์ฟเวอร์ได้!', '', 'error');
+    }
+  };
 
+  public getIDBranchHead = async (username: any) => {
+    this.id = username;
+  };
+  public updateBranchHead = async () => {
+    console.log(this.id);
+    console.log(this.branch_id);
 
-  }
-  public getIDBranchHead  = async (username:any) => {
-    this.id =username
-  }
-  public updateBranchHead  = async () => {
-console.log(this.id)
-console.log(this.branch_id)
-
-let formData = new FormData();
-formData.append('branch',this.branch_id);
+    let formData = new FormData();
+    formData.append('branch', this.branch_id);
     formData.append('ID', this.id);
 
-
     let getData: any = await this.http.post('admin/updateBranchUser', formData);
-    console.log( getData);
+    console.log(getData);
     if (getData.connect) {
-      if (getData.response.rowCount>0) {
+      if (getData.response.rowCount > 0) {
         Swal.fire('แก้ไขข้อมูลเสร็จสิ้น', '', 'success');
-        setTimeout(function(){location.reload()}, 2000);
+        setTimeout(function () {
+          location.reload();
+        }, 2000);
       } else {
         Swal.fire('แก้ไขข้อมูลไม่สำเร็จ', '', 'error');
       }
     } else {
       Swal.fire('ไม่สามารถเชื่อมต่อเซิร์ฟเวอร์ได้!', '', 'error');
     }
-  }
-
-
-
+  };
 }
