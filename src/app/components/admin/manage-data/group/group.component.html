@@ -28,13 +28,14 @@
   >
   <br />
   <br />
-
+<form [formGroup]="inGroup" #formChange="ngForm" (ngSubmit)="inGroup.valid ? insertGroup() : ''">
   <button
     type="button"
     class="btn btn-primary"
     data-toggle="modal"
     data-target="#addTeacher"
     *ngIf="branch_id != null"
+    (click)="clearFrom(formChange)"
   >
     <i class="fas fa-plus"></i>&nbsp; เพิ่มกลุ่มเรียน
   </button>
@@ -59,7 +60,9 @@
             &nbsp;&nbsp;.&nbsp;&nbsp;
             <mat-form-field class="example-full-width">
               <mat-label>โปรดระบุเลขกลุ่มเรียน</mat-label>
-              <input matInput #groupPlus required />
+              <input matInput formControlName="group"
+              required
+              ngModel/>
             </mat-form-field>
             <br />
 
@@ -67,11 +70,13 @@
               style="width: 50%;"
             >
               <mat-label>{{ "โปรดเลือกอาจารย์ที่ปรึกษา" }}</mat-label>
-              <mat-select required>
+              <mat-select formControlName="getTC"
+              required
+              ngModel>
                 <mat-option
                   *ngFor="let i of dataTeacher; let x = index"
                   [value]="i.username"
-                  (click)="nameTeacher(i.username, i.name, groupPlus.value)"
+
                 >
                   {{ i.titlename }}{{ i.fname }}&nbsp;{{ i.lname }}
                 </mat-option>
@@ -85,10 +90,9 @@
               Close
             </button>
             <button
-              type="button"
+              type="submit"
               class="btn btn-success"
-              data-dismiss="modal"
-              (click)="insertGroup(groupPlus.value)"
+
             >
               Save
             </button>
@@ -97,54 +101,12 @@
       </div>
     </div>
   </div>
+</form>
   <br />
   <br />
 
   <!-- The Modal -->
-  <div class="modal" id="updateTeacher">
-    <div class="modal-dialog">
-      <div class="modal-content">
-        <!-- Modal Header -->
-        <div class="modal-header">
-          <h4 class="modal-title">Modal Heading</h4>
-          <button type="button" class="close" data-dismiss="modal">
-            &times;
-          </button>
-        </div>
 
-        <!-- Modal body -->
-        <div class="modal-body">
-          อาจารย์ที่ปรึกษา :&nbsp;&nbsp;<mat-form-field style="width: 50%;">
-            <mat-label>{{ "โปรดเลือกอาจารย์ที่ปรึกษา" }}</mat-label>
-            <mat-select required>
-              <mat-option
-                *ngFor="let i of dataTeacher; let x = index"
-                [value]="i.username"
-                (click)="nameTeacher(i.username, i.name, groupPlus.value)"
-              >
-                {{ i.titlename }}{{ i.fname }}&nbsp;{{ i.lname }}
-              </mat-option>
-            </mat-select>
-          </mat-form-field>
-        </div>
-
-        <!-- Modal footer -->
-        <div class="modal-footer">
-          <button type="button" class="btn btn-danger" data-dismiss="modal">
-            Close
-          </button>
-          <button
-            type="button"
-            class="btn btn-success"
-            data-dismiss="modal"
-            (click)="updateGroup()"
-          >
-            Save
-          </button>
-        </div>
-      </div>
-    </div>
-  </div>
 </div>
 
 <table class="table table-striped" *ngIf="dataGroup != null">
@@ -168,7 +130,7 @@
       </td>
       <td>{{ i.titlename }}{{ i.fname }}&nbsp;&nbsp;{{ i.lname }}</td>
       <td>
-        <span (click)="getIDgroup(i.study_group_id)"
+        <span (click)="getIDgroup(i.study_group_id,i.username,i.study_group_name)"
           ><i
             class="fas fa-edit"
             style="font-size: 18px; cursor: pointer;"
@@ -189,3 +151,52 @@
     </tr>
   </tbody>
 </table>
+<div class="modal" id="updateTeacher">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <form [formGroup]="inGroup" (ngSubmit)="inGroup.valid ? updateGroup() : ''">
+      <!-- Modal Header -->
+      <div class="modal-header">
+        <h4 class="modal-title">Modal Heading</h4>
+        <button type="button" class="close" data-dismiss="modal">
+          &times;
+        </button>
+      </div>
+
+      <!-- Modal body -->
+      <div class="modal-body">
+        กลุ่มเรียน : &nbsp;&nbsp; {{name_Group}} <br>
+        อาจารย์ที่ปรึกษา :&nbsp;&nbsp;<mat-form-field style="width: 50%;">
+          <mat-label>{{ "โปรดเลือกอาจารย์ที่ปรึกษา" }}</mat-label>
+          <mat-select formControlName="getTC"
+          required
+          ngModel>
+            <mat-option
+              *ngFor="let i of dataTeacher; let x = index"
+              [value]="i.username"
+
+            >
+              {{ i.titlename }}{{ i.fname }}&nbsp;{{ i.lname }}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+      </div>
+
+      <!-- Modal footer -->
+      <div class="modal-footer">
+        <button type="button" class="btn btn-danger" data-dismiss="modal">
+          Close
+        </button>
+        <button
+          type="submit"
+          class="btn btn-success"
+
+
+        >
+          Save
+        </button>
+      </div>
+      </form>
+    </div>
+  </div>
+</div>

@@ -1,7 +1,14 @@
 import { Component, OnInit } from '@angular/core';
 import { HttpService } from 'src/app/services/http.service';
 import Swal from 'sweetalert2';
-import { NgForm, FormBuilder, Validators, FormGroup } from '@angular/forms';
+import {
+  NgForm,
+  FormBuilder,
+  Validators,
+  FormGroup,
+  FormGroupDirective,
+} from '@angular/forms';
+import { async } from '@angular/core/testing';
 
 @Component({
   selector: 'app-teacher',
@@ -23,16 +30,19 @@ export class TeacherComponent implements OnInit {
   public BranchHead: any = null;
   public nameBH: any = 'ไม่มีอาจารย์';
   public data1: FormGroup;
+  public data2: FormGroup;
+  public data3: FormGroup;
   public major: any = null;
   public nameTC: any = null;
   username: any;
   id: any;
+  public getBranch: any = null;
 
   constructor(private http: HttpService, private formBuilder: FormBuilder) {
     this.getMajor();
   }
 
-  ngOnInit(): void {
+  ngOnInit() {
     this.data1 = this.formBuilder.group({
       prefix: ['', Validators.required],
       fname: ['', Validators.required],
@@ -40,6 +50,19 @@ export class TeacherComponent implements OnInit {
       major: ['', Validators.required],
       tel: ['', Validators.required],
       email: ['', Validators.email],
+    });
+
+    this.data2 = this.formBuilder.group({
+      code: ['', Validators.required],
+      prefix: ['', Validators.required],
+      fname: ['', Validators.required],
+      lname: ['', Validators.required],
+      tel: ['', Validators.required],
+      email: ['', Validators.email],
+    });
+
+    this.data3 = this.formBuilder.group({
+      BranchHead_id: ['', Validators.required],
     });
   }
 
@@ -72,25 +95,41 @@ export class TeacherComponent implements OnInit {
     this.getTeacher();
     this.getbranchUser();
 
-    console.log(this.branch_id);
+    console.log(this.nameBH);
+    if (this.nameBH == '0  null') {
+      this.nameBH = '';
+    }
   }
 
-  public addTeacher = async (data: NgForm) => {
-    let formData = new FormData();
+  public addTeacher = async () => {
+    console.log('hjghmmh');
 
-    formData.append('name_status_name', this.status_name);
-    formData.append('branch', this.branch_id);
+    console.log(this.data2.value.prefix);
 
-    Object.keys(data.value).forEach((key) => {
-      formData.append('' + key, data.value[key]);
-    });
+    let data = new FormData();
 
-    let getData: any = await this.http.post('admin/setTeacher', formData);
+    data.append('code', this.data2.value.code);
+    data.append('prefix', this.data2.value.prefix);
+    data.append('fname', this.data2.value.fname);
+    data.append('lname', this.data2.value.lname);
+    data.append('tel', this.data2.value.tel);
+    data.append('email', this.data2.value.email);
+    data.append('name_status_name', this.status_name);
+    data.append('branch', this.branch_id);
+
+    // Object.keys(data.value).forEach((key) => {
+    //   formData.append('' + key, data.value[key]);
+    // });
+
+    let getData: any = await this.http.post('admin/setTeacher', data);
     console.log(getData);
     if (getData.connect) {
       if (getData.response.success) {
         let win: any = window;
         win.$('#addTeacher').modal('hide');
+        this.getTeacher();
+        this.getbranchUser();
+
         Swal.fire('เพิ่มข้อมูลเสร็จสิ้น', '', 'success');
       } else {
         Swal.fire('เพิ่มข้อมูลไม่สำเร็จ', '', 'error');
@@ -98,8 +137,11 @@ export class TeacherComponent implements OnInit {
     } else {
       Swal.fire('ไม่สามารถเชื่อมต่อเซิร์ฟเวอร์ได้!', '', 'error');
     }
-    this.getTeacher();
   };
+
+  public clearFrom(data: FormGroupDirective) {
+    data.resetForm();
+  }
 
   public getTeacher = async () => {
     branch_id: this.branch_id;
@@ -200,6 +242,7 @@ export class TeacherComponent implements OnInit {
   };
 
   public updateTeacher = async () => {
+    console.log('gkhgjk');
     let a = this.formBuilder.group({
       code: this.data1.value.code,
       prefix: this.data1.value.prefix,
@@ -240,25 +283,34 @@ export class TeacherComponent implements OnInit {
     }
   };
 
-  public getIDBranchHead = async (username: any) => {
-    this.id = username;
+  public getIDBranchHead = async (e: any) => {
+    this.getBranch=e
+
   };
+  public Head = async (username: any) => {
+    console.log(username)
+
+
+  };
+
   public updateBranchHead = async () => {
-    console.log(this.id);
-    console.log(this.branch_id);
+    console.log(this.getBranch.username);
+    console.log(this.getBranch.branch_code);
+    // console.log(this.id);
+    // console.log(this.branch_id);
 
     let formData = new FormData();
-    formData.append('branch', this.branch_id);
-    formData.append('ID', this.id);
+    formData.append('branch', this.getBranch.branch_code);
+    formData.append('ID', this.getBranch.username);
 
     let getData: any = await this.http.post('admin/updateBranchUser', formData);
     console.log(getData);
     if (getData.connect) {
       if (getData.response.rowCount > 0) {
         Swal.fire('แก้ไขข้อมูลเสร็จสิ้น', '', 'success');
-        setTimeout(function () {
-          location.reload();
-        }, 2000);
+        let win: any = window;
+        win.$('#updateBH').modal('hide');
+        this.getbranchUser();
       } else {
         Swal.fire('แก้ไขข้อมูลไม่สำเร็จ', '', 'error');
       }

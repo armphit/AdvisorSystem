@@ -151,13 +151,14 @@ export class StudentComponent implements OnInit {
         Swal.fire('เพิ่มข้อมูลเสร็จสิ้น', '', 'success');
         let win: any = window;
         win.$('#addStudent').modal('hide');
+        this.getStudent();
       } else {
         Swal.fire('เพิ่มข้อมูลไม่ได้', '', 'error');
       }
     } else {
       Swal.fire('ไม่สามารถเชื่อมต่อเซิร์ฟเวอร์ได้!', '', 'error');
     }
-    this.getStudent();
+
   };
 
   public getStudent = async () => {

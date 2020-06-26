@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { HttpService } from 'src/app/services/http.service';
 import Swal from 'sweetalert2';
-import { FormGroupName } from '@angular/forms';
+import { FormGroup, Validators, FormBuilder, FormGroupDirective } from '@angular/forms';
 
 @Component({
   selector: 'app-group',
@@ -15,16 +15,25 @@ export class GroupComponent implements OnInit {
   public branch_id: any = null;
   public dataTeacher: any = null;
   public groupTH: any = null;
-  public TeacherID: any = null;
   public dataGroup: any = null;
   public nameBH: any = null;
-  id: any;
+  public name_Group: any = null;
+  public inGroup:FormGroup;
 
-  constructor(private http: HttpService) {
+
+  constructor(private http: HttpService,private formBuilder: FormBuilder) {
     this.getMajor();
   }
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+
+    this.inGroup = this.formBuilder.group({
+
+      group: ['', Validators.required],
+      getTC: ['', Validators.required],
+
+    });
+  }
   public getMajor = async () => {
     let getData: any = await this.http.get('admin/branch');
 
@@ -72,32 +81,39 @@ export class GroupComponent implements OnInit {
     }
   };
 
-  public nameTeacher(code: any, name_th: any, groupPlus: any) {
-    this.TeacherID = code;
-  }
+  // public nameTeacher(code: any, name_th: any) {
+  //   this.TeacherID = code;
+  // }
 
-  public insertGroup = async (groupPlus: any) => {
-    this.groupTH = this.namegroup + '.' + groupPlus;
+  public insertGroup = async () => {
+    this.groupTH = this.namegroup + '.'+this.inGroup.value.group ;
+
+    console.log(this.inGroup.value.getTC)
     let formData = new FormData();
 
     formData.append('group_name', this.groupTH);
     formData.append('branch', this.branch_id);
-    formData.append('ID', this.TeacherID);
+    formData.append('ID', this.inGroup.value.getTC);
 
-    console.log(formData.get('group_name'));
-    console.log(formData.get('branch'));
-    console.log(formData.get('ID'));
 
     let getData: any = await this.http.post('admin/AddGroup', formData);
     console.log(getData);
     if (getData.connect) {
-      Swal.fire('เพิ่มข้อมูลเสร็จสิ้น', '', 'success');
+      if (getData.response.result) {
+        Swal.fire('เพิ่มข้อมูลเสร็จสิ้น', '', 'success');
+        let win: any = window;
+        win.$('#addTeacher').modal('hide');
+        this.getGroup();
+      } else {
+        Swal.fire('เพิ่มข้อมูลไม่ได้', '', 'error');
+      }
     } else {
-      Swal.fire('เพิ่มข้อมูลไม่ได้', '', 'error');
+      Swal.fire('ไม่สามารถเชื่อมต่อเซิร์ฟเวอร์ได้!', '', 'error');
     }
-    this.getGroup();
+
   };
   public getGroup = async () => {
+
     branch: this.branch_id;
     let getData: any = await this.http.get(
       'admin/getStudy_group/' + this.branch_id
@@ -113,6 +129,10 @@ export class GroupComponent implements OnInit {
       Swal.fire('ไม่สามารถเชื่อมต่อเซิร์ฟเวอร์ได้!', '', 'error');
     }
   };
+
+  public clearFrom (data: FormGroupDirective){
+    data.resetForm();
+      }
 
   public deleteGroup = async (group_id: any) => {
     delete_group: group_id;
@@ -141,29 +161,33 @@ export class GroupComponent implements OnInit {
     });
   };
 
-  public getIDgroup = async (id: any) => {
-    this.id = id;
+  public getIDgroup = async (id: any,username:any,name:any) => {
+    this.name_Group= name
+    this.inGroup = this.formBuilder.group({
+      group: [id, Validators.required],
+      getTC: [username, Validators.required],
+    })
   };
 
   public updateGroup = async () => {
-    console.log(this.id);
-    console.log(this.TeacherID);
 
-    let formData = new FormData();
-    formData.append('ID', this.TeacherID);
-    formData.append('group', this.id);
 
-    let getData: any = await this.http.post('admin/updateGroup', formData);
-    console.log(getData);
-    if (getData.connect) {
-      if (getData.response.rowCount > 0) {
-        Swal.fire('แก้ไขข้อมูลเสร็จสิ้น', '', 'success');
-      } else {
-        Swal.fire('แก้ไขข้อมูลไม่สำเร็จ', '', 'error');
-      }
-    } else {
-      Swal.fire('ไม่สามารถเชื่อมต่อเซิร์ฟเวอร์ได้!', '', 'error');
-    }
+    console.log(this.inGroup.value.getTC)
+    // let formData = new FormData();
+    // formData.append('ID', this.inGroup.value.getTC);
+    // formData.append('group', this.inGroup.value.group);
+
+    // let getData: any = await this.http.post('admin/updateGroup', formData);
+    // console.log(getData);
+    // if (getData.connect) {
+    //   if (getData.response.rowCount > 0) {
+    //     Swal.fire('แก้ไขข้อมูลเสร็จสิ้น', '', 'success');
+    //   } else {
+    //     Swal.fire('แก้ไขข้อมูลไม่สำเร็จ', '', 'error');
+    //   }
+    // } else {
+    //   Swal.fire('ไม่สามารถเชื่อมต่อเซิร์ฟเวอร์ได้!', '', 'error');
+    // }
     this.getGroup();
   };
 }
