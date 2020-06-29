@@ -1,0 +1,25 @@
+<div
+  class="panel panel-default"
+  style="
+    margin-left: 10px;
+    margin-right: 10px;
+    margin-top: 10px;
+    margin-bottom: 10px;
+  "
+>
+  <div class="panel-heading">
+    <h2 style="margin-bottom: 2px;">ข้อมูลส่วนตัว</h2>
+  </div>
+  <div class="panel-body" *ngFor="let i of dataTeacher">
+    <p>รหัสประจำตัวอาจารย์ : {{ i.username }}</p>
+    <p>
+      ชื่อ - นามสกุล :{{ i.titlename }}{{ i.fname }}&nbsp;&nbsp;{{ i.lname }}
+    </p>
+    <p>เบอร์โทรติดต่อ:{{ i.phone }}</p>
+    <p>E-mail:{{ i.e_mail }}</p>
+    <p>กลุ่มเรียน :{{ i.study_group_name }}</p>
+    <p>สาขาวิชา :{{ i.name }}</p>
+    <p>หัวหน้าสาขา :{{ i.t2 }}{{ i.f2 }}&nbsp;&nbsp;{{ i.l2 }}</p>
+
+  </div>
+</div>

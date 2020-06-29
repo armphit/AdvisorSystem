@@ -3,10 +3,12 @@ import { CommonModule } from '@angular/common';
 
 import { StudentRoutingModule } from './student-routing.module';
 import { SharedModules } from 'src/app/shared-modules';
+import { UploadfileDataComponent } from './uploadfile-data/uploadfile-data.component';
+import { CounselDataComponent } from './counsel-data/counsel-data.component';
 
 
 @NgModule({
-  declarations: [],
+  declarations: [UploadfileDataComponent, CounselDataComponent],
   imports: [
     CommonModule,
     StudentRoutingModule,

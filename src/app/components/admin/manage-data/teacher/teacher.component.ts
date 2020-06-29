@@ -92,13 +92,16 @@ export class TeacherComponent implements OnInit {
     this.namegroup = acronym;
     this.branch_id = code;
     this.name_th = name_th;
-    this.getTeacher();
-    this.getbranchUser();
 
-    console.log(this.nameBH);
     if (this.nameBH == '0  null') {
       this.nameBH = '';
     }
+
+    this.getTeacher();
+    this.getbranchUser();
+
+
+
   }
 
   public addTeacher = async () => {

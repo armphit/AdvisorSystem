@@ -62,6 +62,9 @@ export class GroupComponent implements OnInit {
     this.name_th = name_th;
     this.getTeacher();
     this.getGroup();
+    if (this.nameBH == '0  null') {
+      this.nameBH = '';
+    }
   }
 
   public getTeacher = async () => {
@@ -130,8 +133,9 @@ export class GroupComponent implements OnInit {
     }
   };
 
-  public clearFrom (data: FormGroupDirective){
-    data.resetForm();
+  public clearFrom (){
+    //data.resetForm();
+    this.inGroup.reset();
       }
 
   public deleteGroup = async (group_id: any) => {
@@ -172,22 +176,24 @@ export class GroupComponent implements OnInit {
   public updateGroup = async () => {
 
 
-    console.log(this.inGroup.value.getTC)
-    // let formData = new FormData();
-    // formData.append('ID', this.inGroup.value.getTC);
-    // formData.append('group', this.inGroup.value.group);
+    console.log(this.inGroup.value.group)
+    let formData = new FormData();
+    formData.append('ID', this.inGroup.value.getTC);
+    formData.append('group', this.inGroup.value.group);
 
-    // let getData: any = await this.http.post('admin/updateGroup', formData);
-    // console.log(getData);
-    // if (getData.connect) {
-    //   if (getData.response.rowCount > 0) {
-    //     Swal.fire('แก้ไขข้อมูลเสร็จสิ้น', '', 'success');
-    //   } else {
-    //     Swal.fire('แก้ไขข้อมูลไม่สำเร็จ', '', 'error');
-    //   }
-    // } else {
-    //   Swal.fire('ไม่สามารถเชื่อมต่อเซิร์ฟเวอร์ได้!', '', 'error');
-    // }
+    let getData: any = await this.http.post('admin/updateGroup', formData);
+    console.log(getData);
+    if (getData.connect) {
+      if (getData.response.rowCount > 0) {
+        let win: any = window;
+        win.$('#updateTeacher').modal('hide');
+        Swal.fire('แก้ไขข้อมูลเสร็จสิ้น', '', 'success');
+      } else {
+        Swal.fire('แก้ไขข้อมูลไม่สำเร็จ', '', 'error');
+      }
+    } else {
+      Swal.fire('ไม่สามารถเชื่อมต่อเซิร์ฟเวอร์ได้!', '', 'error');
+    }
     this.getGroup();
   };
 }

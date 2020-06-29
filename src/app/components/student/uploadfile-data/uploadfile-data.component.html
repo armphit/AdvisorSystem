@@ -1,0 +1,88 @@
+<div
+  class="panel panel-default"
+  style="
+    margin-left: 10px;
+    margin-right: 10px;
+    margin-top: 10px;
+    margin-bottom: 10px;
+  "
+>
+  <div class="panel-heading">
+    <h2 style="margin-bottom: 2px;">ข้อมูลส่วนตัว</h2>
+  </div>
+  <div class="panel-body" *ngFor="let i of dataStudent">
+    <p>รหัสนักศึกษา : {{ i.username }}</p>
+    <p>
+      ชื่อ - นามสกุล :{{ i.titlename }}{{ i.fname }}&nbsp;&nbsp;{{ i.lname }}
+    </p>
+    <p>เบอร์โทรติดต่อ:{{ i.phone }}</p>
+    <p>E-mail:{{ i.e_mail }}</p>
+    <p>สาขาวิชา :{{ i.name }}</p>
+    <p>หัวหน้าสาขา :{{ i.t2 }}{{ i.f2 }}&nbsp;&nbsp;{{ i.l2 }}</p>
+    <p>กลุ่มเรียน :{{ i.study_group_name }}</p>
+    <p>อาจารย์ที่ปรึกษา:{{ i.t1 }}{{ i.f1 }}&nbsp;&nbsp;{{ i.l1 }}</p>
+  </div>
+</div>
+
+  <div class="panel-heading">
+    <h2 style="margin-bottom: 2px;">ข้อมูลการศึกษา</h2>
+  </div>
+  <div class="panel-body">
+    ภาคการศึกษา :
+    <mat-form-field style="width: 13%;">
+      <mat-label>เลือกปีการศึกษา</mat-label>
+      <mat-select required [(value)]="selected">
+        <mat-option *ngFor="let i of range" [value]="i.value">
+          {{ i.value }}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+    /
+    <mat-form-field style="width: 25;" *ngIf="selected">
+      <mat-label>เลือกภาคการเรียน</mat-label>
+      <mat-select [(value)]="term" required>
+        <mat-option value="1">ภาคเรียนที่ 1</mat-option>
+        <mat-option value="2">ภาคเรียนที่ 2</mat-option>
+        <mat-option value="3">ภาคเรียนฤดูร้อน</mat-option>
+      </mat-select>
+    </mat-form-field>
+
+
+    <!-- <p>
+      <span>
+        ประวัติส่วนตัว :
+          <input  type="file" accept=".pdf" #profile name="file"  (change)="uploadFile(profile.files[0])">
+          <label class="custom-file-label" for="customFile">Choose file...</label>
+
+      </span>
+     </p> -->
+     <!-- <p>
+      <span
+        >ผลการเรียน :
+        <input  (change)="uploadFile(results.files[0])" #results type="file" accept=".pdf">
+          <label class="custom-file-label" for="customFile">Choose file...</label>
+      </span>
+    </p> -->
+
+
+    <!-- <p>
+      <span
+        >ตารางเรียน :
+        <input  (change)="uploadFile(schedule.files[0])" #schedule  type="file" accept=".pdf">
+          <label class="custom-file-label" for="customFile">Choose file...</label>
+      </span>
+    </p> -->
+    <span>    <button type="button" class="btn btn-danger" data-dismiss="modal">
+      Close
+    </button>
+    &nbsp;&nbsp;
+    <button
+      type="button"
+      class="btn btn-success"
+      (click)="onClickupload()"
+    >
+      Save
+    </button></span>
+
+  </div>
+

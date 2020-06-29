@@ -1,0 +1,103 @@
+<div
+  class="panel panel-default"
+  style="
+    margin-left: 10px;
+    margin-right: 10px;
+    margin-top: 10px;
+    margin-bottom: 10px;
+  "
+>
+  <div class="panel-heading">
+    <h2 style="margin-bottom: 2px;">การขอคำปรึกษา</h2>
+  </div>
+  <div class="panel-body" *ngFor="let i of dataStudent">
+    <p>รหัสนักศึกษา : {{ i.username }}</p>
+    <p>
+      ชื่อ - นามสกุล :{{ i.titlename }}{{ i.fname }}&nbsp;&nbsp;{{ i.lname }}
+    </p>
+    <p>กลุ่มเรียน :{{ i.study_group_name }}</p>
+    <p>อาจารย์ที่ปรึกษา:{{ i.t1 }}{{ i.f1 }}&nbsp;&nbsp;{{ i.l1 }}</p>
+
+    <form
+      [formGroup]="inAdvice"
+      #formChange="ngForm"
+      (ngSubmit)="inAdvice.valid ? insertAdvice() : ''"
+    >
+      <button
+        type="button"
+        class="btn btn-primary"
+        data-toggle="modal"
+        data-target="#addCounsel"
+        (click)="clearFrom()"
+      >
+        <i class="fas fa-plus"></i>&nbsp; เพิ่มการขอคำปรึกษา
+      </button>
+
+      <!-- The Modal -->
+      <div class="modal" id="addCounsel">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <!-- Modal Header -->
+            <div class="modal-header">
+              <h2 class="modal-title">เพิ่มการขอคำปรึกษา</h2>
+              <button type="button" class="close" data-dismiss="modal">
+                &times;
+              </button>
+            </div>
+
+            <!-- Modal body -->
+            <div class="modal-body">
+              <label for="exampleFormControlInput1">เรื่อง</label>
+              <input class="form-control" type="text" formControlName="subject" required ngModel />
+              <br />
+              <label for="exampleFormControlTextarea1">รายละเอียด</label>
+              <textarea
+                class="form-control"
+                id="exampleFormControlTextarea1"
+                rows="3"
+                formControlName="details" required ngModel
+              ></textarea>
+              <br />
+              <p>
+                อาจารย์ที่ปรึกษา : &nbsp;{{ i.t1 }}{{ i.f1 }}&nbsp;&nbsp;{{
+                  i.l1
+                }}
+              </p>
+              <p>{{ thDate }}</p>
+              <p>{{ thTime }}</p>
+            </div>
+
+            <!-- Modal footer -->
+            <div class="modal-footer">
+              <button type="button" class="btn btn-danger" data-dismiss="modal">
+                ยกเลิก
+              </button>
+              <button type="submit" class="btn btn-success">
+                บันทึก
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>
+
+<table class="table">
+  <thead class="thead-dark">
+    <tr>
+      <th scope="col">#</th>
+      <th scope="col">First</th>
+      <th scope="col">Last</th>
+      <th scope="col">Handle</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th scope="row">1</th>
+      <td>Mark</td>
+      <td>Otto</td>
+      <td>@mdo</td>
+    </tr>
+  </tbody>
+</table>

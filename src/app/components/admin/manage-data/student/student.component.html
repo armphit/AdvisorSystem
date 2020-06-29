@@ -28,7 +28,7 @@
   >
   <br />
 
-  <span *ngIf="branch_id != null" ฟ
+  <span *ngIf="branch_id != null"
     >กลุ่มเรียน :&nbsp;&nbsp;<mat-form-field>
       <mat-label>{{ "โปรดเลือกกลุ่มเรียน" }}</mat-label>
       <mat-select required>
@@ -59,13 +59,14 @@
   >
   <br />
   <br />
-
+  <form [formGroup]="data2" #formChange="ngForm" (ngSubmit)="data2.valid ? addStudent() : ''">
   <button
     type="button"
     class="btn btn-primary"
     data-toggle="modal"
     data-target="#addStudent"
     *ngIf="nameAD != null"
+    (click)="clearFrom(formChange)"
   >
     <i class="fas fa-plus"></i>&nbsp;เพิ่มนักศึกษา
   </button>
@@ -74,7 +75,7 @@
   <div class="modal" id="addStudent">
     <div class="modal-dialog">
       <div class="modal-content">
-        <form [formGroup]="data2" (ngSubmit)="data2.valid ? addStudent() : ''">
+
           <!-- Modal Header -->
           <div class="modal-header">
             <h4 class="modal-title">เพิ่มนักศึกษา</h4>
@@ -162,10 +163,11 @@
               Save
             </button>
           </div>
-        </form>
+
       </div>
     </div>
   </div>
+</form>
 </div>
 
 <mat-form-field

@@ -1,224 +1,91 @@
-<div
-  class="panel panel-default"
-  style="
-    margin-top: 10px;
-    margin-bottom: 10px;
-    margin-right: 10px;
-    margin-left: 10px;
-  "
->
-  <div class="panel-heading">
-    <b style="font-size: 20px;">ข้อมูลการปรึกษา</b>
+<div class="panel-body" style="margin-left: 10px; margin-right: 10px;">
+  สาขาวิชา: &nbsp;
+
+  <mat-form-field *ngIf="datamajor" style="width: 20%;">
+    <mat-label>{{ "โปรดเลือกสาขาวิชา" }}</mat-label>
+    <mat-select required>
+      <mat-option
+        *ngFor="let i of datamajor; let x = index"
+        [value]="i.name"
+        (click)="
+          nameMajor (
+            i.acronym,
+              i.branch_id,
+              i.name,
+              i.titlename,
+              i.fname,
+              i.lname
+          )
+        "
+      >
+        {{ i.name }}
+      </mat-option>
+    </mat-select>
+  </mat-form-field>
+  <br />
+  <span *ngIf="branch_id != null"
+  >หัวหน้าสาขาวิชา:&nbsp;&nbsp;{{ nameBH }}&nbsp;&nbsp;</span
+  >
+  <br />
+
+  <span *ngIf="branch_id != null"
+      >กลุ่มเรียน :&nbsp;&nbsp;<mat-form-field>
+        <mat-label>{{ "โปรดเลือกกลุ่มเรียน" }}</mat-label>
+        <mat-select required>
+          <mat-option
+            *ngFor="let i of dataGroup; let x = index"
+            [value]="i.study_group_id"
+            (click)="
+              nameGroup_Student(
+                i.branch_id,
+                i.study_group_id,
+                i.study_group_name,
+                i.username,
+                i.titlename,
+                i.fname,
+                i.lname
+              )
+            "
+          >
+            {{ i.study_group_name }}
+          </mat-option>
+        </mat-select>
+      </mat-form-field></span
+    >
+    <br />
+
+    <span *ngIf="nameAD != null"
+      >อาจารย์ที่ปรึกษา : &nbsp;&nbsp;{{ nameAD }}</span
+    >
+    <br />
+    <br />
+
   </div>
-  <div class="panel-body" style="margin-left: 10px; margin-right: 10px;">
-    สาขาวิชา : &nbsp;
-    <mat-form-field>
-      <mat-label>*เลือกสาขาวิชา</mat-label>
-      <mat-select>
-        <mat-option></mat-option>
-        <mat-option value="option1">Option 1</mat-option>
-        <mat-option value="option2">Option 2</mat-option>
-        <mat-option value="option3">Option 3</mat-option>
-      </mat-select>
-    </mat-form-field>
-    <br />
-    กลุ่มเรียน : &nbsp;
-    <mat-form-field>
-      <mat-label>*เลือกกลุ่มเรียน</mat-label>
-      <mat-select>
-        <mat-option></mat-option>
-        <mat-option value="option1">Option 1</mat-option>
-        <mat-option value="option2">Option 2</mat-option>
-        <mat-option value="option3">Option 3</mat-option>
-      </mat-select>
-    </mat-form-field>
-    <br />
-    ภาคการศึกษา : &nbsp;
-    <mat-form-field>
-      <mat-label>*เลือกปีการศึกษา</mat-label>
-      <mat-select>
-        <mat-option></mat-option>
-        <mat-option value="option1">Option 1</mat-option>
-        <mat-option value="option2">Option 2</mat-option>
-        <mat-option value="option3">Option 3</mat-option>
-      </mat-select>
-    </mat-form-field>
-    &nbsp; / &nbsp;
-    <mat-form-field>
-      <mat-label>*เลือกภาคการศึกษา</mat-label>
-      <mat-select>
-        <mat-option></mat-option>
-        <mat-option value="option1">Option 1</mat-option>
-        <mat-option value="option2">Option 2</mat-option>
-        <mat-option value="option3">Option 3</mat-option>
-      </mat-select>
-    </mat-form-field>
-
-    <mat-form-field
-      class="example-full-width"
-      style="float: right; width: 500px; padding-right: 50px;"
-    >
-      <input matInput placeholder="ค้นหา" #se_gr />
-    </mat-form-field>
-    <br />
-
-    <!-- Button to Open the Modal -->
-    <button
-      type="button"
-      class="btn btn-primary"
-      data-toggle="modal"
-      data-target="#myModal"
-      style="margin-bottom: 10px;"
-    >
-      <i class="fas fa-plus" style="margin-right: 3px;"></i><b>เพิ่มคำปรึกษา</b>
-    </button>
-    <!-- The Modal -->
-    <div class="modal" id="myModal">
-      <div class="modal-dialog modal-xl">
-        <div class="modal-content">
-          <!-- Modal Header -->
-          <div class="modal-header">
-            <p class="modal-title" style="font-size: 18px;">
-              เพิ่มการขอคำปรึกษา
-            </p>
-            <button type="button" class="close" data-dismiss="modal">
-              &times;
-            </button>
-          </div>
-          <!-- Modal body -->
-          <div class="modal-body">
-            <label>เรื่อง:</label> &nbsp;&nbsp;
-            <mat-form-field class="example-full-width">
-              <input matInput placeholder="*เพิ่มชื่อเรื่อง" />
-            </mat-form-field>
-            <div class="form-group green-border-focus">
-              <label for="exampleFormControlTextarea5">รายละเอียด:</label>
-              <textarea
-                class="form-control"
-                id="exampleFormControlTextarea5"
-                rows="3"
-              ></textarea>
-            </div>
-          </div>
-          <!-- Modal footer -->
-          <div class="modal-footer">
-            <button type="button" class="btn btn-success" data-dismiss="modal">
-              บันทึก
-            </button>
-            <button type="button" class="btn btn-danger" data-dismiss="modal">
-              Close
-            </button>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <button
-      type="button"
-      class="btn btn-dark"
-      data-toggle="modal"
-      data-target="#myModal2"
-      style="margin-bottom: 10px;"
-    >
-      <i class="fas fa-plus" style="margin-right: 3px;"></i
-      ><b>ตอบกลับคำปรึกษา</b>
-    </button>
-    <!-- The Modal -->
-    <div class="modal" id="myModal2">
-      <div class="modal-dialog modal-xl">
-        <div class="modal-content">
-          <!-- Modal Header -->
-          <div class="modal-header">
-            <p class="modal-title" style="font-size: 18px;">
-              เพิ่มการขอคำปรึกษา
-            </p>
-            <button type="button" class="close" data-dismiss="modal">
-              &times;
-            </button>
-          </div>
-          <!-- Modal body -->
-          <div class="modal-body">
-            <b>ชื่อผู้ขอคำปรึกษา:</b>
-            <br />
-            <b>เรื่อง:</b> &nbsp;&nbsp;
-            <br />
-            <b>รายละเอียด:</b>
-            <hr>
-            <textarea
-            class="form-control"
-            id="exampleFormControlTextarea5"
-            rows="3"
-          ></textarea>
-
-          </div>
-
-
-          <!-- Modal footer -->
-          <div class="modal-footer">
-            <button type="button" class="btn btn-success" data-dismiss="modal">
-              บันทึก
-            </button>
-            <button type="button" class="btn btn-danger" data-dismiss="modal">
-              Close
-            </button>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <table class="table">
+    <table class="table table-striped" *ngIf="dataStudent != null">
       <thead class="thead-dark">
         <tr>
-          <th>Firstname</th>
-          <th>Lastname</th>
-          <th>Email</th>
-          <th></th>
+          <th scope="col">ลำดับ</th>
+          <th scope="col">รหัสนักศึกษา</th>
+          <th scope="col">ชื่อนักศึกษา</th>
+          <th scope="col">เบอร์โทรติดต่อ</th>
+          <th scope="col">E-mail</th>
+          <th scope="col">สถานะ</th>
+          <th scope="col"></th>
         </tr>
       </thead>
       <tbody>
-        <tr>
-          <td>John</td>
-          <td>Doe</td>
-          <td>john@example.com</td>
+        <tr *ngFor="let i of dataStudent; let x = index">
+          <th scope="row">{{ x + 1 }}</th>
           <td>
-            <button
-              type="button"
-              class="btn btn-primary"
-              style="margin-right: 5px;"
-            >
-              ประวัติการศึกษา
-            </button>
-            <button
-              type="button"
-              class="btn btn-danger"
-              style="margin-right: 5px;"
-            >
-              ผลการศึกษา
-            </button>
-            <button type="button" class="btn btn-warning">ตารางเรียน</button>
+            {{ i.username }}
           </td>
-        </tr>
-        <tr>
-          <td>Mary</td>
-          <td>Moe</td>
-          <td>mary@example.com</td>
+          <td>{{ i.titlename }}{{ i.fname }}&nbsp;{{ i.lname }}</td>
+          <td>{{ i.phone }}</td>
+          <td>{{ i.e_mail }}</td>
+          <td>{{ status }}</td>
           <td>
-            <button type="button" class="btn btn-primary">Primary</button>
-            <button type="button" class="btn btn-danger">Primary</button>
-            <button type="button" class="btn btn-warning">Primary</button>
-          </td>
-        </tr>
-        <tr>
-          <td>July</td>
-          <td>Dooley</td>
-          <td>july@example.com</td>
-          <td>
-            <button type="button" class="btn btn-primary">Primary</button>
-            <button type="button" class="btn btn-danger">Primary</button>
-            <button type="button" class="btn btn-warning">Primary</button>
+
           </td>
         </tr>
       </tbody>
     </table>
-  </div>
-</div>

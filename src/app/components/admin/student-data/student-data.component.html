@@ -1,98 +1,91 @@
-  <div class="panel panel-default" style="margin-top: 10px;margin-bottom: 10px;margin-right: 10px;margin-left: 10px;">
-    <div class="panel-heading">
-      <h1 style="padding-top: 15px;">ข้อมูลนักศึกษา</h1>
-    </div>
-    <div class="panel-body" style="margin-left: 10px;margin-right: 10px;">
-      สาขาวิชา : &nbsp; <mat-form-field>
-        <mat-label>*เลือกสาขาวิชา</mat-label>
-        <mat-select>
-          <mat-option></mat-option>
-          <mat-option value="option1">Option 1</mat-option>
-          <mat-option value="option2">Option 2</mat-option>
-          <mat-option value="option3">Option 3</mat-option>
-        </mat-select>
-      </mat-form-field>
-      <br>
-      กลุ่มเรียน : &nbsp; &nbsp; <mat-form-field>
-        <mat-label>*เลือกกลุ่มเรียน</mat-label>
-        <mat-select>
-          <mat-option></mat-option>
-          <mat-option value="option1">Option 1</mat-option>
-          <mat-option value="option2">Option 2</mat-option>
-          <mat-option value="option3">Option 3</mat-option>
-        </mat-select>
-      </mat-form-field>
-      <br>
-      ภาคการศึกษา : &nbsp; <mat-form-field>
-        <mat-label>*เลือกปีการศึกษา</mat-label>
-        <mat-select>
-          <mat-option></mat-option>
-          <mat-option value="option1">Option 1</mat-option>
-          <mat-option value="option2">Option 2</mat-option>
-          <mat-option value="option3">Option 3</mat-option>
-        </mat-select>
-      </mat-form-field>
-      &nbsp; / &nbsp;
-      <mat-form-field>
-        <mat-label>*เลือกภาคการศึกษา</mat-label>
-        <mat-select>
-          <mat-option></mat-option>
-          <mat-option value="option1">Option 1</mat-option>
-          <mat-option value="option2">Option 2</mat-option>
-          <mat-option value="option3">Option 3</mat-option>
-        </mat-select>
-      </mat-form-field>
-      <br>
+<div class="panel-body" style="margin-left: 10px; margin-right: 10px;">
+สาขาวิชา: &nbsp;
 
+<mat-form-field *ngIf="datamajor" style="width: 20%;">
+  <mat-label>{{ "โปรดเลือกสาขาวิชา" }}</mat-label>
+  <mat-select required>
+    <mat-option
+      *ngFor="let i of datamajor; let x = index"
+      [value]="i.name"
+      (click)="
+        nameMajor (
+          i.acronym,
+            i.branch_id,
+            i.name,
+            i.titlename,
+            i.fname,
+            i.lname
+        )
+      "
+    >
+      {{ i.name }}
+    </mat-option>
+  </mat-select>
+</mat-form-field>
+<br />
+<span *ngIf="branch_id != null"
+>หัวหน้าสาขาวิชา:&nbsp;&nbsp;{{ nameBH }}&nbsp;&nbsp;</span
+>
+<br />
 
+<span *ngIf="branch_id != null"
+    >กลุ่มเรียน :&nbsp;&nbsp;<mat-form-field>
+      <mat-label>{{ "โปรดเลือกกลุ่มเรียน" }}</mat-label>
+      <mat-select required>
+        <mat-option
+          *ngFor="let i of dataGroup; let x = index"
+          [value]="i.study_group_id"
+          (click)="
+            nameGroup_Student(
+              i.branch_id,
+              i.study_group_id,
+              i.study_group_name,
+              i.username,
+              i.titlename,
+              i.fname,
+              i.lname
+            )
+          "
+        >
+          {{ i.study_group_name }}
+        </mat-option>
+      </mat-select>
+    </mat-form-field></span
+  >
+  <br />
 
+  <span *ngIf="nameAD != null"
+    >อาจารย์ที่ปรึกษา : &nbsp;&nbsp;{{ nameAD }}</span
+  >
+  <br />
+  <br />
 
-
-      <table class="table">
-        <thead class="thead-dark">
-          <tr>
-            <th>Firstname</th>
-            <th>Lastname</th>
-            <th>Email</th>
-            <th></th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td>John</td>
-            <td>Doe</td>
-            <td>john@example.com</td>
-            <td>
-              <button type="button" class="btn btn-primary" style="margin-right: 5px;">ประวัติการศึกษา</button>
-              <button type="button" class="btn btn-danger "style="margin-right: 5px;">ผลการศึกษา</button>
-              <button type="button" class="btn btn-warning">ตารางเรียน</button>
-            </td>
-          </tr>
-          <tr>
-            <td>Mary</td>
-            <td>Moe</td>
-            <td>mary@example.com</td>
-            <td>
-              <button type="button" class="btn btn-primary">Primary</button>
-              <button type="button" class="btn btn-danger">Primary</button>
-              <button type="button" class="btn btn-warning">Primary</button>
-            </td>
-          </tr>
-          <tr>
-            <td>July</td>
-            <td>Dooley</td>
-            <td>july@example.com</td>
-            <td>
-              <button type="button" class="btn btn-primary">Primary</button>
-              <button type="button" class="btn btn-danger">Primary</button>
-              <button type="button" class="btn btn-warning">Primary</button>
-            </td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-  </div>
-
-
-
-
+</div>
+  <table class="table table-striped" *ngIf="dataStudent != null">
+    <thead class="thead-dark">
+      <tr>
+        <th scope="col">ลำดับ</th>
+        <th scope="col">รหัสนักศึกษา</th>
+        <th scope="col">ชื่อนักศึกษา</th>
+        <th scope="col">เบอร์โทรติดต่อ</th>
+        <th scope="col">E-mail</th>
+        <th scope="col">สถานะ</th>
+        <th scope="col"></th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let i of dataStudent; let x = index">
+        <th scope="row">{{ x + 1 }}</th>
+        <td>
+          {{ i.username }}
+        </td>
+        <td>{{ i.titlename }}{{ i.fname }}&nbsp;{{ i.lname }}</td>
+        <td>{{ i.phone }}</td>
+        <td>{{ i.e_mail }}</td>
+        <td>{{ status }}</td>
+        <td>
+          <button type="button" class="btn btn-primary">Primary</button>
+        </td>
+      </tr>
+    </tbody>
+  </table>

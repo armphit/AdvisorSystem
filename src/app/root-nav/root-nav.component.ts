@@ -10,6 +10,7 @@ import { Router } from '@angular/router';
   styleUrls: ['./root-nav.component.scss'],
 })
 export class RootNavComponent {
+  public dataProfile = JSON.parse(localStorage.getItem("userLogin")).titlename+JSON.parse(localStorage.getItem("userLogin")).fname+"  "+JSON.parse(localStorage.getItem("userLogin")).lname;
   isHandset$: Observable<boolean> = this.breakpointObserver
     .observe(Breakpoints.Handset)
     .pipe(

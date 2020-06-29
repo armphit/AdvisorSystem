@@ -10,6 +10,7 @@
           style="width:40%; text-align: center"
         />
       </div>
+      <div style="text-align: center;"><b>{{dataProfile}}</b></div>
     <mat-nav-list *ngIf="status=='Admin'">
       <a mat-list-item [routerLink]="['/admin/manage-data']" [routerLinkActive]="['link-active']">จัดการข้อมูล</a>
       <a mat-list-item [routerLink]="['/admin/student-data']" [routerLinkActive]="['link-active']">ข้อมูลนักศึกษา</a>
@@ -18,16 +19,16 @@
     </mat-nav-list>
 
     <mat-nav-list *ngIf="status=='นักศึกษา'">
-      <!-- <a mat-list-item [routerLink]="['/admin/manage-data']" [routerLinkActive]="['link-active']">จัดการข้อมูล</a>
-      <a mat-list-item [routerLink]="['/admin/student-data']" [routerLinkActive]="['link-active']">ข้อมูลนักศึกษา</a>
-      <a mat-list-item [routerLink]="['/admin/data-advice']" [routerLinkActive]="['link-active']">ข้อมูลการปรึกษา</a> -->
+      <a mat-list-item [routerLink]="['/student/uploadfile-data']" [routerLinkActive]="['link-active']">จัดการข้อมูล</a>
+      <!-- <a mat-list-item [routerLink]="['/admin/student-data']" [routerLinkActive]="['link-active']">ข้อมูลนักศึกษา</a> -->
+      <a mat-list-item [routerLink]="['/student/counsel-data']" [routerLinkActive]="['link-active']">ข้อมูลการปรึกษา</a>
       <a mat-list-item (click)="onLogout()"><font color ="red"><i><u>ออกระบบ</u></i></font></a>
     </mat-nav-list>
 
     <mat-nav-list *ngIf="status=='อาจารย์'">
-      <!-- <a mat-list-item [routerLink]="['/admin/manage-data']" [routerLinkActive]="['link-active']">จัดการข้อมูล</a>
-      <a mat-list-item [routerLink]="['/admin/student-data']" [routerLinkActive]="['link-active']">ข้อมูลนักศึกษา</a>
-      <a mat-list-item [routerLink]="['/admin/data-advice']" [routerLinkActive]="['link-active']">ข้อมูลการปรึกษา</a> -->
+       <a mat-list-item [routerLink]="['/teacher/teacher-data']" [routerLinkActive]="['link-active']">จัดการข้อมูล</a>
+      <a mat-list-item [routerLink]="['/teacher/student-upload']" [routerLinkActive]="['link-active']">ข้อมูลนักศึกษา</a>
+      <a mat-list-item [routerLink]="['/teacher/counsel-data']" [routerLinkActive]="['link-active']">ข้อมูลการปรึกษา</a>
       <a mat-list-item (click)="onLogout()"><font color ="red"><i><u>ออกระบบ</u></i></font></a>
     </mat-nav-list>
   </mat-sidenav>

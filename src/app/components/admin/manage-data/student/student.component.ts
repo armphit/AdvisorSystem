@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import Swal from 'sweetalert2';
 import { HttpService } from 'src/app/services/http.service';
-import { NgForm, FormBuilder, Validators, FormGroup } from '@angular/forms';
+import { NgForm, FormBuilder, Validators, FormGroup, FormGroupDirective } from '@angular/forms';
 import { from } from 'rxjs';
 import { JsonPipe } from '@angular/common';
 
@@ -85,7 +85,13 @@ export class StudentComponent implements OnInit {
     this.name_th = name_th;
     this.nameBH = titlename + fname + '  ' + lname;
 
+    if (this.nameBH == '0  null') {
+      this.nameBH = '';
+    }
+
     this.getGroup();
+
+
   }
 
   public getGroup = async () => {
@@ -94,7 +100,7 @@ export class StudentComponent implements OnInit {
     let getData: any = await this.http.get(
       'admin/getStudy_group/' + this.branch_id
     );
-    console.log(getData.response.result);
+
     if (getData.connect) {
       if (getData.response.rowCount > 0) {
         this.dataGroup = getData.response.result;
@@ -119,7 +125,7 @@ export class StudentComponent implements OnInit {
     this.groupID = study_group_id;
     this.groupName = study_group_name;
 
-    console.log(this.nameAD);
+
     this.getStudent();
   }
 
@@ -142,10 +148,10 @@ export class StudentComponent implements OnInit {
       data3.append('' + key, data[key]);
     });
 
-    console.log(JSON.stringify(data));
+
 
     let getData: any = await this.http.post('admin/setStudent', data3);
-    console.log(getData);
+
     if (getData.connect) {
       if (getData.response.result) {
         Swal.fire('เพิ่มข้อมูลเสร็จสิ้น', '', 'success');
@@ -160,6 +166,10 @@ export class StudentComponent implements OnInit {
     }
 
   };
+
+  public clearFrom (data: FormGroupDirective){
+    data.resetForm();
+      }
 
   public getStudent = async () => {
     let Data = new FormData();
@@ -180,13 +190,13 @@ export class StudentComponent implements OnInit {
   };
 
   public deleteStudent = async (id: any) => {
-    console.log(id);
+
 
     this.http.confirmAlert('ลบรายการนี้หรือไม่').then(async (value: any) => {
       if (value) {
         let getData: any = await this.http.post('admin/delStudent/' + id);
 
-        console.log(getData);
+
         if (getData.connect) {
           if (getData.response.rowCount > 0) {
             Swal.fire({
@@ -232,7 +242,8 @@ export class StudentComponent implements OnInit {
       tel: [tel, Validators.required],
       email: [email, Validators.required],
     });
-    console.log(this.data1);
+
+
     this.getGroup1();
   };
   public updateStudent = async () => {
@@ -246,13 +257,13 @@ export class StudentComponent implements OnInit {
       tel: this.data1.value.tel,
       email: this.data1.value.email,
     };
-    console.log(data2);
+
     let data = new FormData();
     Object.keys(data2).forEach((key) => {
       data.append('' + key, data2[key]);
     });
     let getData: any = await this.http.post('admin/updateStudent', data);
-    console.log(getData);
+
     if (getData.connect) {
       if (getData.response.result) {
         Swal.fire('เพิ่มข้อมูลเสร็จสิ้น', '', 'success');
@@ -269,7 +280,7 @@ export class StudentComponent implements OnInit {
 
   public getBranch = async (branch) => {
     this.branch = branch;
-    console.log(this.data1.value.major);
+
 
     this.getGroup1();
   };
@@ -279,7 +290,7 @@ export class StudentComponent implements OnInit {
     let getData: any = await this.http.get(
       'admin/getStudy_group/' + this.branch
     );
-    console.log(this.branch);
+
     if (getData.connect) {
       if (getData.response.rowCount > 0) {
         this.dataGroup1 = getData.response.result;

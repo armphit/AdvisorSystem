@@ -5,9 +5,15 @@ body { margin: 0; }
 
 * {
   font-family: 'Chakra Petch', sans-serif !important;
+
 }
 .modal-backdrop {
   z-index: -1;
+}
+
+mat-form-field {
+  width: 100%;
+  line-height: unset !important;
 }
 
 
